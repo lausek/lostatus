@@ -1,47 +1,48 @@
 type Internal = Option<String>;
 
-#[derive(Debug)]
+#[derive(Serialize, Debug)]
 pub struct I3Block
 {
+    // TODO: this looks ugly
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Internal,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub instance: Internal,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub full_text: Internal,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub short_text: Internal,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub color: Internal,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub background: Internal,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub min_width: Internal,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub align: Internal,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub border: Internal,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub separator: Internal,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub separator_block_width: Internal,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub urgent: Internal,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub markup: Internal,
 }
 
-impl std::fmt::Display for I3Block {
-
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
-        //unwrap_and_write(f, &self.name)?;
-        //unwrap_and_write(f, &self.instance)?;
-
-        //unwrap_and_write(f, &self.full_text)?;
-        //unwrap_and_write(f, &self.short_text)?;
-        //unwrap_and_write(f, &self.color)?;
-        //unwrap_and_write(f, &self.background)?;
-        //unwrap_and_write(f, &self.min_width)?;
-        //unwrap_and_write(f, &self.align)?;
-        //unwrap_and_write(f, &self.border)?;
-
-        //unwrap_and_write(f, &self.separator)?;
-        //unwrap_and_write(f, &self.separator_block_width)?;
-        //unwrap_and_write(f, &self.urgent)?;
-        //unwrap_and_write(f, &self.markup)?;
+impl std::fmt::Display for I3Block
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error>
+    {
+        write!(f, "{}", serde_json::to_string(self).unwrap());
         Ok(())
     }
-
 }
 
 impl Default for I3Block
@@ -67,12 +68,4 @@ impl Default for I3Block
             markup: None,
         }
     }
-}
-
-fn unwrap_and_write(f: &mut std::fmt::Formatter, value: &Internal) -> Result<(), std::fmt::Error> 
-{
-    if let Some(v) = value {
-        write!(f, "{},", v)?;
-    }
-    Ok(())
 }

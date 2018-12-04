@@ -1,4 +1,9 @@
+#[macro_use]
+extern crate serde_derive;
+
 extern crate i3ipc;
+extern crate serde;
+extern crate serde_json;
 
 #[macro_use]
 mod macros;
@@ -21,7 +26,7 @@ fn main()
         i3.subscribe(&[i3ipc::Subscription::Window])
             .expect("could not subscribe to i3 events");
 
-        // TODO: is listen blocking?
+        // TODO: does listen block?
         loop {
             for event in i3.listen() {
                 println!("{:?}", event);

@@ -34,7 +34,8 @@ where
 
                 let next_update = widget.update(block);
 
-                i3print!("{},", block);
+                i3print!("{}", block);
+                // TODO: add comma here for every object except last one
             }
             i3print!("],");
         }
