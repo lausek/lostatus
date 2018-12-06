@@ -17,7 +17,11 @@ use crate::scheduler::Scheduler;
 
 fn main()
 {
-    let widgets = vec![Box::new(widget::DateTime::new())];
+    // change these
+    let widgets = vec![
+        Box::new(widget::Battery::new()),
+        Box::new(widget::DateTime::new()),
+    ];
 
     let mut i3 = i3ipc::I3EventListener::connect().expect("i3 not running");
     let mut scheduler = Scheduler::from_widgets(widgets);
