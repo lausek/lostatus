@@ -20,6 +20,11 @@ where
         }
     }
 
+    pub fn push(&mut self)
+    {
+        // push next gadget into queue
+    }
+
     pub fn run(&mut self)
     {
         i3print!("{ \"version\": 1 }");
@@ -32,7 +37,7 @@ where
                 let ref mut block = iwidget.0;
                 let ref mut widget = iwidget.1;
 
-                let next_update = widget.update(block);
+                if let Some(next_update) = widget.update(block) {}
 
                 i3print!("{}", block);
                 // TODO: add comma here for every object except last one
