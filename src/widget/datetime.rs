@@ -17,8 +17,9 @@ impl DateTime
 
 impl Widget for DateTime
 {
-    fn update(&mut self, block: &mut I3Block) -> Option<Duration>
+    fn update(&mut self) -> Option<(I3Block, Duration)>
     {
+        let mut block = I3Block::default();
         let timestamp = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .expect("time is messed up");
@@ -26,7 +27,7 @@ impl Widget for DateTime
 
         block.full_text = Some(format!("{:?}", info));
 
-        Some(INTERVAL)
+        Some((block, INTERVAL))
     }
 }
 

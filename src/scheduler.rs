@@ -3,7 +3,7 @@ use crate::widget::Widget;
 
 pub struct Scheduler<T: Widget>
 {
-    widgets: Vec<(I3Block, Box<T>)>,
+    widgets: Vec<(String, Box<T>)>,
 }
 
 impl<T> Scheduler<T>
@@ -15,7 +15,12 @@ where
         Self {
             widgets: widgets
                 .into_iter()
-                .map(|widget| (I3Block::default(), widget))
+                .map(|mut widget| {
+                    if let Some((output, next_update)) = widget.update() {
+                        return (format!("{}", output), widget);
+                    }
+                    (String::from("error on block"), widget)
+                })
                 .collect::<Vec<_>>(),
         }
     }
@@ -33,13 +38,8 @@ where
 
         loop {
             i3print!("[");
-            for iwidget in &mut self.widgets {
-                let ref mut block = iwidget.0;
-                let ref mut widget = iwidget.1;
-
-                if let Some(next_update) = widget.update(block) {}
-
-                i3print!("{}", block);
+            for (ref block, _) in &mut self.widgets {
+                i3print!(block);
                 // TODO: add comma here for every object except last one
             }
             i3print!("],");
