@@ -5,6 +5,7 @@ use crate::widget::{UpdateEvent, Widget};
 pub struct App<T: Widget + ?Sized>
 {
     widgets: Vec<(String, Box<T>)>,
+    sys_index: Vec<usize>,
 }
 
 impl<T> App<T>
@@ -14,6 +15,7 @@ where
     pub fn init(widgets: Vec<Box<T>>) -> Self
     {
         Self {
+            sys_index: vec![],
             widgets: widgets
                 .into_iter()
                 .map(|mut widget| {
@@ -54,12 +56,11 @@ where
         while let Ok(event) = receiver.recv() {
             match event {
                 sys_event @ System(_) => {
-                    self.widgets
-                        .iter_mut()
-                        .filter(|w| w.1.needs_system())
-                        .for_each(move |w| {
-                            w.1.update(&sys_event);
-                        });
+                    let mut iter = self.widgets.iter_mut().filter(|w| w.1.needs_system());
+
+                    while let Some(widget) = iter.next() {
+                        update(widget, &sys_event);
+                    }
                 }
                 User(input) => println!("json made me {:?}", input),
                 Time => {}
@@ -68,5 +69,22 @@ where
         }
 
         Ok(())
+    }
+}
+
+fn update<T>(widget: &mut (String, Box<T>), evt: &UpdateEvent)
+where
+    T: Widget + ?Sized,
+{
+    // if `update` returns None: nothing to update
+    if let Some((i3output, next_update)) = widget.1.update(evt) {
+        widget.0 = match i3output {
+            Ok(i3output) => format!("{}", i3output),
+            Err(msg) => i3error!(msg),
+        };
+
+        if let Some(next_update) = next_update {
+            // TODO: set next update
+        }
     }
 }

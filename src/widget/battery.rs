@@ -5,6 +5,7 @@ use crate::widget::BlockResult;
 use crate::widget::{UpdateEvent, Widget};
 
 const INTERVAL: Duration = Duration::from_secs(60);
+const FILE_PATH: &str = "/sys/class/power_supply/BAT0/capacity";
 
 pub struct Battery {}
 
@@ -20,6 +21,11 @@ impl Widget for Battery
 {
     fn update(&mut self, evt: &UpdateEvent) -> Option<(BlockResult, Option<Duration>)>
     {
-        Some((Err("battery not found"), None))
+        let content = std::fs::read_to_string(FILE_PATH).expect("could not read power file");
+        let mut block = I3Output::default();
+
+        block.full_text = Some(content);
+
+        Some((Ok(block), Some(INTERVAL)))
     }
 }

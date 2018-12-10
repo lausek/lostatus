@@ -27,10 +27,11 @@ impl Widget for Focus
 
     fn update(&mut self, evt: &UpdateEvent) -> Option<(BlockResult, Option<Duration>)>
     {
+        let mut block = I3Output::default();
         match evt {
-            System(box WindowEvent(evt)) => {}
+            System(box WindowEvent(evt)) => block.full_text = evt.container.name.clone(),
             _ => {}
         }
-        Some((Err("no focus"), Some(INTERVAL)))
+        Some((Ok(block), Some(INTERVAL)))
     }
 }

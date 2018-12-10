@@ -23,6 +23,7 @@ fn main()
 {
     // change these
     let widgets: Vec<Box<dyn Widget>> = vec![
+        Box::new(widget::Focus::new()),
         Box::new(widget::Battery::new()),
         Box::new(widget::DateTime::new()),
     ];
