@@ -6,3 +6,10 @@ macro_rules! i3print {
         i3print!(format!($msg, $($x),*))
     }};
 }
+
+macro_rules! i3error {
+    ($msg:expr) => {
+        // TODO: add color
+        format!("{{\"full_text\": \"{}\"}}", $msg)
+    };
+}

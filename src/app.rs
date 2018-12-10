@@ -2,14 +2,14 @@ use std::sync::mpsc::Receiver;
 
 use crate::widget::{UpdateEvent, Widget};
 
-pub struct App<T: Widget>
+pub struct App<T: Widget + ?Sized>
 {
     widgets: Vec<(String, Box<T>)>,
 }
 
 impl<T> App<T>
 where
-    T: Widget,
+    T: Widget + ?Sized,
 {
     pub fn init(widgets: Vec<Box<T>>) -> Self
     {
@@ -20,7 +20,7 @@ where
                     if let Some((Ok(output), next_update)) = widget.update(&UpdateEvent::Time) {
                         return (format!("{}", output), widget);
                     }
-                    (String::from("error on block"), widget)
+                    (i3error!("error on block"), widget)
                 })
                 .collect::<Vec<_>>(),
         }
@@ -52,7 +52,6 @@ where
         i3print!("[");
 
         while let Ok(event) = receiver.recv() {
-            println!("run: {:?}", event);
             match event {
                 sys_event @ System(_) => {
                     self.widgets

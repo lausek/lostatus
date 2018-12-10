@@ -22,10 +22,9 @@ use crate::widget::{UpdateEvent, Widget};
 fn main()
 {
     // change these
-    let widgets = vec![
+    let widgets: Vec<Box<dyn Widget>> = vec![
         Box::new(widget::Battery::new()),
-        Box::new(widget::Battery::new()),
-        //Box::new(widget::DateTime::new()),
+        Box::new(widget::DateTime::new()),
     ];
 
     let (sender, receiver) = channel();
