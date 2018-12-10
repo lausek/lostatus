@@ -24,6 +24,7 @@ fn main()
     // change these
     let widgets = vec![
         Box::new(widget::Battery::new()),
+        Box::new(widget::Battery::new()),
         //Box::new(widget::DateTime::new()),
     ];
 

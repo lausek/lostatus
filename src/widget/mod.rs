@@ -26,6 +26,13 @@ pub trait Widget
     {
         false
     }
-    // returns duration after which the widget wants its next update
+    // returns duration after which the widget wants its next update:
+    //  - None: Block wasn't updated
+    //  - Some: Block was updated and delivered some output      `BlockResult`:
+    //          - Ok: New cache value of this block
+    //          - Err: Error while updating block
+    //      `Duration`:
+    //          - Some: Update after this period of time
+    //          - None: Don't schedule for updates anymore
     fn update(&mut self, evt: &UpdateEvent) -> Option<(BlockResult, Option<Duration>)>;
 }

@@ -29,9 +29,15 @@ where
     pub fn render(&self)
     {
         i3print!("[");
-        for (ref block, _) in &self.widgets {
-            i3print!(block);
-            // TODO: add comma here for every object except last one
+
+        let mut iter = self.widgets.iter();
+
+        if let Some((ref first, _)) = iter.next() {
+            i3print!(first);
+        }
+
+        for (ref block, _) in iter {
+            i3print!(",{}", block);
         }
         i3print!("],");
     }
