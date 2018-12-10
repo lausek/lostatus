@@ -5,7 +5,6 @@ use crate::widget::{UpdateEvent, Widget};
 pub struct App<T: Widget + ?Sized>
 {
     widgets: Vec<(String, Box<T>)>,
-    sys_index: Vec<usize>,
 }
 
 impl<T> App<T>
@@ -15,7 +14,6 @@ where
     pub fn init(widgets: Vec<Box<T>>) -> Self
     {
         Self {
-            sys_index: vec![],
             widgets: widgets
                 .into_iter()
                 .map(|mut widget| {

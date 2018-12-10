@@ -21,11 +21,15 @@ impl Widget for Battery
 {
     fn update(&mut self, evt: &UpdateEvent) -> Option<(BlockResult, Option<Duration>)>
     {
-        let content = std::fs::read_to_string(FILE_PATH).expect("could not read power file");
-        let mut block = I3Output::default();
+        match std::fs::read_to_string(FILE_PATH) {
+            Ok(content) => {
+                let mut block = I3Output::default();
 
-        block.full_text = Some(content);
+                block.full_text = Some(content);
 
-        Some((Ok(block), Some(INTERVAL)))
+                Some((Ok(block), Some(INTERVAL)))
+            }
+            Err(_) => Some((Err("no battery"), None)),
+        }
     }
 }
