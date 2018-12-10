@@ -13,7 +13,7 @@ mod app;
 mod i3;
 mod widget;
 
-use std::sync::mpsc::channel;
+use std::sync::mpsc::{channel, Sender};
 use std::thread;
 
 use crate::app::App;
@@ -28,10 +28,20 @@ fn main()
         //Box::new(widget::DateTime::new()),
     ];
 
-    let mut i3 = i3ipc::I3EventListener::connect().expect("i3 not running");
     let (sender, receiver) = channel();
 
+    spawn_system_sender(&sender);
+    spawn_user_sender(&sender);
+    spawn_time_sender(&sender);
+
+    App::init(widgets).run(&receiver);
+}
+
+fn spawn_system_sender(sender: &Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
+{
+    let mut i3 = i3ipc::I3EventListener::connect().expect("i3 not running");
     let system_sender = sender.clone();
+
     thread::spawn(move || {
         i3.subscribe(&[i3ipc::Subscription::Window])
             .expect("could not subscribe to i3 events");
@@ -48,13 +58,29 @@ fn main()
                 }
             }
         }
-    });
+    })
+}
+
+fn spawn_user_sender(sender: &Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
+{
+    use crate::i3::I3Input;
 
     let user_sender = sender.clone();
-    thread::spawn(move || { /* user events */ });
 
+    thread::spawn(move || loop {
+        let mut input = String::new();
+
+        std::io::stdin().read_line(&mut input).unwrap();
+
+        match serde_json::from_str::<I3Input>(input.as_ref()) {
+            Ok(input) => user_sender.send(UpdateEvent::User(input)).unwrap(),
+            _ => panic!("invalid json input"),
+        }
+    })
+}
+
+fn spawn_time_sender(sender: &Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
+{
     let time_sender = sender.clone();
-    thread::spawn(move || { /* timed events */ });
-
-    App::init(widgets).run(&receiver);
+    thread::spawn(move || { /* timed events */ })
 }

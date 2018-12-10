@@ -39,6 +39,7 @@ where
         for (ref block, _) in iter {
             i3print!(",{}", block);
         }
+
         i3print!("],");
     }
 
@@ -51,17 +52,17 @@ where
         i3print!("[");
 
         while let Ok(event) = receiver.recv() {
+            println!("run: {:?}", event);
             match event {
                 sys_event @ System(_) => {
                     self.widgets
                         .iter_mut()
                         .filter(|w| w.1.needs_system())
                         .for_each(move |w| {
-                            // TODO: pass sys_event here
                             w.1.update(&sys_event);
                         });
                 }
-                User(input) => {}
+                User(input) => println!("json made me {:?}", input),
                 Time => {}
             }
             self.render();

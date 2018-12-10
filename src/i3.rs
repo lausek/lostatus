@@ -1,7 +1,21 @@
 type Internal = Option<String>;
 
-#[derive(Clone, Debug, Serialize)]
-pub struct I3Input {}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct I3Input
+{
+    name: String,
+    instance: String,
+
+    button: i64,
+    modifiers: Vec<String>,
+
+    x: i64,
+    y: i64,
+    relative_x: i64,
+    relative_y: i64,
+    width: i64,
+    height: i64,
+}
 
 #[derive(Clone, Debug, Serialize)]
 pub struct I3Output
