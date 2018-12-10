@@ -1,7 +1,8 @@
 use std::time::Duration;
 
-use crate::output::I3Block;
-use crate::widget::Widget;
+use crate::i3::I3Output;
+use crate::widget::BlockResult;
+use crate::widget::{UpdateEvent, Widget};
 
 const INTERVAL: Duration = Duration::from_secs(60);
 
@@ -17,8 +18,8 @@ impl Battery
 
 impl Widget for Battery
 {
-    fn update(&mut self) -> Option<(I3Block, Duration)>
+    fn update(&mut self, evt: &UpdateEvent) -> Option<(BlockResult, Option<Duration>)>
     {
-        Some((block, INTERVAL))
+        Some((Err("battery not found"), None))
     }
 }

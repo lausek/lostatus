@@ -1,7 +1,10 @@
 type Internal = Option<String>;
 
-#[derive(Serialize, Debug)]
-pub struct I3Block
+#[derive(Clone, Debug, Serialize)]
+pub struct I3Input {}
+
+#[derive(Clone, Debug, Serialize)]
+pub struct I3Output
 {
     // TODO: this looks ugly
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -36,16 +39,16 @@ pub struct I3Block
     pub markup: Internal,
 }
 
-impl std::fmt::Display for I3Block
+impl std::fmt::Display for I3Output
 {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error>
     {
-        write!(f, "{}", serde_json::to_string(self).unwrap());
+        write!(f, "{}", serde_json::to_string(self).unwrap())?;
         Ok(())
     }
 }
 
-impl Default for I3Block
+impl Default for I3Output
 {
     fn default() -> Self
     {

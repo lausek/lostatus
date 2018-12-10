@@ -1,7 +1,8 @@
 use std::time::Duration;
 
-use crate::output::I3Block;
-use crate::widget::Widget;
+use crate::i3::I3Output;
+use crate::widget::BlockResult;
+use crate::widget::{UpdateEvent, Widget};
 
 const INTERVAL: Duration = Duration::from_secs(30);
 
@@ -17,9 +18,9 @@ impl DateTime
 
 impl Widget for DateTime
 {
-    fn update(&mut self) -> Option<(I3Block, Duration)>
+    fn update(&mut self, evt: &UpdateEvent) -> Option<(BlockResult, Option<Duration>)>
     {
-        let mut block = I3Block::default();
+        let mut block = I3Output::default();
         let timestamp = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .expect("time is messed up");
@@ -27,7 +28,7 @@ impl Widget for DateTime
 
         block.full_text = Some(format!("{:?}", info));
 
-        Some((block, INTERVAL))
+        Some((Ok(block), Some(INTERVAL)))
     }
 }
 
