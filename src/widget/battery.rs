@@ -19,8 +19,9 @@ impl Battery
 
 impl Widget for Battery
 {
-    fn update(&mut self, evt: &UpdateEvent) -> Option<(BlockResult, Option<Duration>)>
+    fn update(&mut self, _evt: &UpdateEvent) -> Option<(BlockResult, Option<Duration>)>
     {
+        // TODO: only do timed updates here
         match std::fs::read_to_string(FILE_PATH) {
             Ok(content) => {
                 let mut block = I3Output::default();

@@ -18,7 +18,7 @@ impl DateTime
 
 impl Widget for DateTime
 {
-    fn update(&mut self, evt: &UpdateEvent) -> Option<(BlockResult, Option<Duration>)>
+    fn update(&mut self, _evt: &UpdateEvent) -> Option<(BlockResult, Option<Duration>)>
     {
         let mut block = I3Output::default();
         let timestamp = std::time::SystemTime::now()

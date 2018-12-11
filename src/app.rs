@@ -13,17 +13,18 @@ where
 {
     pub fn init(widgets: Vec<Box<T>>) -> Self
     {
-        Self {
+        let mut app = Self {
             widgets: widgets
                 .into_iter()
-                .map(|mut widget| {
-                    if let Some((Ok(output), next_update)) = widget.update(&UpdateEvent::Time) {
-                        return (format!("{}", output), widget);
-                    }
-                    (i3error!("error on block"), widget)
-                })
+                .map(|w| (String::new(), w))
                 .collect::<Vec<_>>(),
-        }
+        };
+
+        app.widgets
+            .iter_mut()
+            .for_each(|widget| update(widget, &UpdateEvent::Time));
+
+        app
     }
 
     pub fn render(&self)

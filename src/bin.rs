@@ -19,7 +19,7 @@ use std::thread;
 use crate::app::App;
 use crate::widget::{UpdateEvent, Widget};
 
-fn main()
+fn main() -> Result<(), &'static str>
 {
     // change these
     let widgets: Vec<Box<dyn Widget>> = vec![
@@ -34,7 +34,7 @@ fn main()
     spawn_user_sender(&sender);
     spawn_time_sender(&sender);
 
-    App::init(widgets).run(&receiver);
+    App::init(widgets).run(&receiver)
 }
 
 fn spawn_system_sender(sender: &Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
