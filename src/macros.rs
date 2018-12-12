@@ -27,8 +27,8 @@ macro_rules! debug_log {
         use std::io::Write;
         use crate::macros::LOG;
         if let Ok(mut lock) = LOG.lock() {
-            lock.write($msg.as_bytes());
-            lock.write(b"\n");
+            lock.write($msg.as_bytes()).unwrap();
+            lock.write(b"\n").unwrap();
         }
     }};
     ($msg:expr, $($x:expr),*) => {if cfg!(feature = "debug") {

@@ -25,6 +25,10 @@ use crate::widget::{UpdateEvent, Widget};
 
 fn main() -> Result<(), &'static str>
 {
+    if cfg!(feature = "debug") {
+        setup_panic_hook();
+    }
+
     // change these
     let widgets: Vec<Box<dyn Widget>> = vec![
         Box::new(widget::Focus::new()),
@@ -84,4 +88,32 @@ fn spawn_user_sender(sender: &Sender<UpdateEvent>) -> std::thread::JoinHandle<()
             Err(msg) => panic!(format!("invalid json input: {}", msg)),
         }
     })
+}
+
+fn setup_panic_hook()
+{
+    use std::ops::Deref;
+    use std::panic;
+
+    panic::set_hook(Box::new(|panic_info| {
+        let (filename, line) = panic_info
+            .location()
+            .map(|loc| (loc.file(), loc.line()))
+            .unwrap_or(("<unknown>", 0));
+
+        let cause = panic_info
+            .payload()
+            .downcast_ref::<String>()
+            .map(String::deref);
+
+        let cause = cause.unwrap_or_else(|| {
+            panic_info
+                .payload()
+                .downcast_ref::<&str>()
+                .map(|s| *s)
+                .unwrap_or("<cause unknown>")
+        });
+
+        debug_log!("A panic occurred at {}:{}: {}", filename, line, cause);
+    }));
 }
