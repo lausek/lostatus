@@ -38,16 +38,15 @@ fn main() -> Result<(), &'static str>
 
     let (sender, receiver) = channel();
 
-    spawn_system_sender(&sender);
-    spawn_user_sender(&sender);
+    spawn_system_sender(sender.clone());
+    spawn_user_sender(sender.clone());
 
     App::init(widgets).run(&receiver)
 }
 
-fn spawn_system_sender(sender: &Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
+fn spawn_system_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
 {
     let mut i3 = i3ipc::I3EventListener::connect().expect("i3 not running");
-    let system_sender = sender.clone();
 
     thread::spawn(move || {
         i3.subscribe(&[i3ipc::Subscription::Window])
@@ -61,7 +60,7 @@ fn spawn_system_sender(sender: &Sender<UpdateEvent>) -> std::thread::JoinHandle<
                         debug_log!("from system");
 
                         let sys_event = UpdateEvent::System(Box::new(event));
-                        system_sender.send(sys_event).unwrap();
+                        sender.send(sys_event).unwrap();
                     }
                     _ => panic!("system event is err"),
                 }
@@ -70,21 +69,19 @@ fn spawn_system_sender(sender: &Sender<UpdateEvent>) -> std::thread::JoinHandle<
     })
 }
 
-fn spawn_user_sender(sender: &Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
+fn spawn_user_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
 {
+    use std::io::BufRead;
     use crate::i3::I3Input;
 
-    let user_sender = sender.clone();
+    let stdin = std::io::stdin();
 
-    thread::spawn(move || loop {
-        let mut input = String::new();
-
-        std::io::stdin().read_line(&mut input).unwrap();
-
-        debug_log!("from i3: {}", input);
+    thread::spawn(move || for line in stdin.lock().lines() {
+        let input = line.expect("reading from stdin failed??");
+        debug_log!("from i3: {:?}", input);
 
         match serde_json::from_str::<I3Input>(input.as_ref()) {
-            Ok(input) => user_sender.send(UpdateEvent::User(input)).unwrap(),
+            Ok(input) => sender.send(UpdateEvent::User(input)).unwrap(),
             Err(msg) => panic!(format!("invalid json input: {}", msg)),
         }
     })
