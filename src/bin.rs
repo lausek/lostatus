@@ -11,6 +11,7 @@ extern crate serde_json;
 mod macros;
 mod app;
 mod i3;
+mod scheduler;
 mod widget;
 
 use std::sync::mpsc::{channel, Sender};
@@ -32,7 +33,6 @@ fn main() -> Result<(), &'static str>
 
     spawn_system_sender(&sender);
     spawn_user_sender(&sender);
-    spawn_time_sender(&sender);
 
     App::init(widgets).run(&receiver)
 }
@@ -77,10 +77,4 @@ fn spawn_user_sender(sender: &Sender<UpdateEvent>) -> std::thread::JoinHandle<()
             Err(msg) => panic!(format!("invalid json input: {}", msg)),
         }
     })
-}
-
-fn spawn_time_sender(sender: &Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
-{
-    let time_sender = sender.clone();
-    thread::spawn(move || { /* timed events */ })
 }

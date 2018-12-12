@@ -3,18 +3,18 @@ type Internal = Option<String>;
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct I3Input
 {
-    name: String,
-    instance: String,
+    pub name: String,
+    pub instance: String,
 
-    button: i64,
-    modifiers: Vec<String>,
+    pub button: i64,
+    pub modifiers: Vec<String>,
 
-    x: i64,
-    y: i64,
-    relative_x: i64,
-    relative_y: i64,
-    width: i64,
-    height: i64,
+    pub x: i64,
+    pub y: i64,
+    pub relative_x: i64,
+    pub relative_y: i64,
+    pub width: i64,
+    pub height: i64,
 }
 
 #[derive(Clone, Debug, Serialize)]
