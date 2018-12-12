@@ -32,7 +32,7 @@ impl Widget for Toggle
             _ => {}
         }
 
-        block.full_text = format!("{}", self.active);
+        block.full_text = Some(format!("{}", self.active));
 
         Some((Ok(block), Some(INTERVAL)))
     }
