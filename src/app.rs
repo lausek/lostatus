@@ -113,7 +113,10 @@ where
     // if `update` returns None: nothing to update
     if let Some((i3output, next_update)) = widget.update(evt) {
         *cache = match i3output {
-            Ok(i3output) => format!("{}", i3output),
+            Ok(mut i3output) => {
+                i3output.instance = Some(format!("{}", id));
+                format!("{}", i3output)
+            }
             Err(msg) => i3error!(msg),
         };
 
