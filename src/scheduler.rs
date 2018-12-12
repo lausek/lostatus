@@ -1,4 +1,3 @@
-use std::ops::Add;
 use std::time::{Duration, SystemTime};
 
 pub struct Scheduler
@@ -36,7 +35,14 @@ impl Scheduler
                     next = slot;
                 }
             }
-            Some(next.unwrap().duration_since(SystemTime::now()).unwrap())
+            match next.unwrap().duration_since(SystemTime::now()) {
+                Ok(duration) => Some(duration),
+                // TODO: update is overdue. this should do something
+                Err(_) => {
+                    debug_log!("scheduler queue: {:?}", self.slots);
+                    None
+                }
+            }
         } else {
             None
         }
@@ -45,17 +51,11 @@ impl Scheduler
     pub fn get_due_ids(&self) -> Vec<usize>
     {
         let now = SystemTime::now();
-        let mut ids = vec![];
-        let mut iter = self
-            .slots
+        self.slots
             .iter()
             .enumerate()
-            .filter(|(_, slot)| slot.is_some());
-        for (id, slot) in iter {
-            if slot.unwrap() <= now {
-                ids.push(id);
-            }
-        }
-        ids
+            .filter(|(_, slot)| slot.is_some() && slot.unwrap() <= now)
+            .map(|(id, _)| id)
+            .collect()
     }
 }

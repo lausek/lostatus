@@ -58,7 +58,7 @@ fn spawn_system_sender(sender: &Sender<UpdateEvent>) -> std::thread::JoinHandle<
             for event in i3.listen() {
                 match event {
                     Ok(event) => {
-                        debug_log!("from system: {:?}", event);
+                        debug_log!("from system");
 
                         let sys_event = UpdateEvent::System(Box::new(event));
                         system_sender.send(sys_event).unwrap();

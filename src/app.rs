@@ -1,5 +1,3 @@
-use std::iter::Enumerate;
-use std::slice::IterMut;
 use std::str::FromStr;
 use std::sync::mpsc::{Receiver, RecvTimeoutError};
 use std::time::Duration;
@@ -31,7 +29,7 @@ where
                 .collect::<Vec<_>>(),
         };
 
-        for mut widget in &mut app.widgets.iter_mut().enumerate() {
+        for widget in &mut app.widgets.iter_mut().enumerate() {
             update(&mut app.scheduler, widget, &UpdateEvent::Time);
         }
 
@@ -65,6 +63,7 @@ where
 
         self.render();
 
+        // TODO: add `quit` event
         loop {
             let event = if let Some(timeout) = self.timeout {
                 receiver.recv_timeout(timeout)
@@ -89,16 +88,17 @@ where
                     let id = usize::from_str(input.instance.as_ref()).unwrap();
                     if let Some(widget) = self.widgets.get_mut(id) {
                         update(&mut self.scheduler, (id, widget), &UpdateEvent::User(input));
-                        self.timeout = self.scheduler.next_update();
                     }
                 }
-                Ok(Time) | Err(RecvTimeoutError::Timeout) => {}
+                Ok(Time) | Err(RecvTimeoutError::Timeout) => debug_log!("time was sent"),
                 Err(RecvTimeoutError::Disconnected) => panic!("sending channel got killed"),
             }
 
             for id in self.scheduler.get_due_ids() {
-                let widget = self.widgets.get(id);
+                let mut widget = self.widgets.get_mut(id).expect("inconsistent ids");
+                update(&mut self.scheduler, (id, &mut widget), &UpdateEvent::Time);
             }
+            self.timeout = self.scheduler.next_update();
 
             self.render();
         }
