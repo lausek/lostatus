@@ -1,6 +1,9 @@
 #![feature(box_patterns)]
 
 #[macro_use]
+extern crate lazy_static;
+
+#[macro_use]
 extern crate serde_derive;
 
 extern crate i3ipc;
@@ -51,6 +54,8 @@ fn spawn_system_sender(sender: &Sender<UpdateEvent>) -> std::thread::JoinHandle<
             for event in i3.listen() {
                 match event {
                     Ok(event) => {
+                        debug_log!("from system: {:?}", event);
+
                         let sys_event = UpdateEvent::System(Box::new(event));
                         system_sender.send(sys_event).unwrap();
                     }
@@ -71,6 +76,8 @@ fn spawn_user_sender(sender: &Sender<UpdateEvent>) -> std::thread::JoinHandle<()
         let mut input = String::new();
 
         std::io::stdin().read_line(&mut input).unwrap();
+
+        debug_log!("from i3: {}", input);
 
         match serde_json::from_str::<I3Input>(input.as_ref()) {
             Ok(input) => user_sender.send(UpdateEvent::User(input)).unwrap(),

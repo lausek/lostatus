@@ -63,6 +63,8 @@ where
 
         i3print!("[");
 
+        self.render();
+
         loop {
             let event = if let Some(timeout) = self.timeout {
                 receiver.recv_timeout(timeout)
@@ -115,6 +117,11 @@ where
         *cache = match i3output {
             Ok(mut i3output) => {
                 i3output.instance = Some(format!("{}", id));
+
+                if i3output.full_text.is_none() {
+                    i3output.full_text = Some(String::new());
+                }
+
                 format!("{}", i3output)
             }
             Err(msg) => i3error!(msg),
