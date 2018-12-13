@@ -74,21 +74,16 @@ fn spawn_user_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
     use crate::i3::I3Input;
     use std::io::BufRead;
 
-    let stdin = std::io::stdin();
+    thread::spawn(move || {
+        for line in std::io::stdin().lock().lines().skip(1) {
+            let input = line.expect("error on stdin line");
 
-    thread::spawn(move || loop {
-        let input = stdin
-            .lock()
-            .lines()
-            .map(|s| s.expect("error on stdin line"))
-            .take_while(|s| s != "]")
-            .fold(String::new(), |acc, s| format!("{}{}", acc, s));
+            debug_log!("from i3: {:?}", input);
 
-        debug_log!("from i3: {:?}", input);
-
-        match serde_json::from_str::<I3Input>(input.as_ref()) {
-            Ok(input) => sender.send(UpdateEvent::User(input)).unwrap(),
-            Err(msg) => panic!(format!("invalid json input: {}", msg)),
+            match serde_json::from_str::<I3Input>(input.as_ref()) {
+                Ok(input) => sender.send(UpdateEvent::User(input)).unwrap(),
+                Err(msg) => panic!(format!("invalid json input: {}", msg)),
+            }
         }
     })
 }

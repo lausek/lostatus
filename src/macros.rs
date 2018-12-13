@@ -11,8 +11,8 @@ macro_rules! debug_log {
         use std::io::Write;
         use crate::macros::LOG;
         if let Ok(mut lock) = LOG.lock() {
-            lock.write($msg.as_bytes()).unwrap();
             lock.write(b"\n").unwrap();
+            lock.write($msg.as_bytes()).unwrap();
         }
     }};
     ($msg:expr, $($x:expr),*) => {if cfg!(feature = "debug") {
@@ -21,11 +21,14 @@ macro_rules! debug_log {
 }
 
 macro_rules! i3print {
-    ($msg:expr) => {{
-        println!("{}", $msg);
-    }};
-    ($msg:expr, $($x:expr),*) => {{
-        i3print!(format!($msg, $($x),*));
+    ($msg:expr) => {{ print!("{}", $msg); }};
+    ($msg:expr, $($x:expr),*) => {{ i3print!(format!($msg, $($x),*)); }};
+}
+
+macro_rules! i3flush {
+    () => {{
+        use std::io::Write;
+        std::io::stdout().flush().unwrap();
     }};
 }
 

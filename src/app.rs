@@ -38,7 +38,7 @@ where
 
     pub fn render(&self)
     {
-        i3print!("[");
+        i3print!("\n[");
 
         let mut iter = self.widgets.iter();
 
@@ -51,15 +51,15 @@ where
         }
 
         i3print!("],");
+        i3flush!();
     }
 
     pub fn run(&mut self, receiver: &Receiver<UpdateEvent>) -> Result<(), &'static str>
     {
         use self::UpdateEvent::*;
 
-        i3print!("{ \"version\": 1, \"click_events\": true }");
-
-        i3print!("[");
+        i3print!("{ \"version\": 1, \"click_events\": true } [");
+        i3flush!();
 
         self.render();
 
