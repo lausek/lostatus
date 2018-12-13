@@ -1,6 +1,7 @@
 mod battery;
 mod datetime;
 mod focus;
+mod toggle;
 
 use std::time::Duration;
 
@@ -9,6 +10,7 @@ use crate::i3::{I3Input, I3Output};
 pub use self::battery::Battery;
 pub use self::datetime::DateTime;
 pub use self::focus::Focus;
+pub use self::toggle::Toggle;
 
 #[derive(Debug)]
 pub enum UpdateEvent

@@ -1,14 +1,13 @@
 use std::time::Duration;
 
-use i3ipc::event::Event::*;
-
 use crate::i3::I3Output;
 use crate::widget::BlockResult;
 use crate::widget::{UpdateEvent, UpdateEvent::*, Widget};
 
 const INTERVAL: Duration = Duration::from_secs(30);
 
-pub struct Toggle {
+pub struct Toggle
+{
     active: bool,
 }
 
@@ -16,9 +15,7 @@ impl Toggle
 {
     pub fn new() -> Self
     {
-        Self {
-            active: true,
-        }
+        Self { active: true }
     }
 }
 
@@ -28,7 +25,7 @@ impl Widget for Toggle
     {
         let mut block = I3Output::default();
         match evt {
-            User(input) => self.active = !self.active,
+            User(_) => self.active = !self.active,
             _ => {}
         }
 

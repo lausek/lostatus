@@ -31,6 +31,7 @@ fn main() -> Result<(), &'static str>
 
     // change these
     let widgets: Vec<Box<dyn Widget>> = vec![
+        Box::new(widget::Toggle::new()),
         Box::new(widget::Focus::new()),
         Box::new(widget::Battery::new()),
         Box::new(widget::DateTime::new()),
@@ -75,8 +76,14 @@ fn spawn_user_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
     use std::io::BufRead;
 
     thread::spawn(move || {
-        for line in std::io::stdin().lock().lines().skip(1) {
-            let input = line.expect("error on stdin line");
+        for line in std::io::stdin().lock().lines() {
+            let mut input = line.expect("error on stdin line");
+            if input == "[" {
+                continue;
+            }
+            if Some(',') == input.chars().next() {
+                input = input.split_off(1);
+            }
 
             debug_log!("from i3: {:?}", input);
 
