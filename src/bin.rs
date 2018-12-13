@@ -17,7 +17,6 @@ mod i3;
 mod scheduler;
 mod widget;
 
-use std::process::Output;
 use std::sync::mpsc::{channel, Sender};
 use std::thread;
 
@@ -26,9 +25,21 @@ use crate::widget::{UpdateEvent, Widget};
 
 pub const SHELL: &str = "fish";
 
-pub fn shell(cmd: &str) -> std::io::Result<Output>
+pub fn shell<'a>(cmd: &str) -> std::io::Result<String>
 {
-    std::process::Command::new(SHELL).arg(cmd).output()
+    std::process::Command::new(SHELL)
+        .args(&["-c", cmd])
+        .output()
+        .map(|buffer| {
+            if !buffer.status.success() {
+                panic!(format!(
+                    "command `{}` failed: `{:?}`",
+                    cmd,
+                    buffer.status.code()
+                ));
+            }
+            String::from_utf8(buffer.stdout).unwrap()
+        })
 }
 
 fn spawn_system_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
