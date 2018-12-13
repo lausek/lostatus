@@ -25,11 +25,7 @@ impl Widget for DateTime
         match evt {
             &UpdateEvent::Time => {
                 let result = match shell(DATE_FORMAT) {
-                    Ok(date) => {
-                        let mut block = I3Output::default();
-                        block.full_text = format!("{:?}", date);
-                        Ok(block)
-                    }
+                    Ok(date) => Ok(I3Output::from_text(format!("{:?}", date))),
                     _ => Err("date failed"),
                 };
                 Some((result, Some(INTERVAL)))

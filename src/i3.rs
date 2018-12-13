@@ -62,6 +62,17 @@ pub struct I3Output
     pub markup: Internal,
 }
 
+impl I3Output
+{
+    pub fn from_text(full_text: String) -> Self
+    {
+        Self {
+            full_text,
+            ..Self::default()
+        }
+    }
+}
+
 impl std::fmt::Display for I3Output
 {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error>

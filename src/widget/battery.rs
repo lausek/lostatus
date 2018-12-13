@@ -28,10 +28,8 @@ impl Widget for Battery
                     if let Some(content) = content.split_whitespace().next() {
                         match f64::from_str(content.as_ref()) {
                             Ok(capacity) => {
-                                let mut block = I3Output::default();
                                 let idx = (capacity / 101.0 * 9.0).floor() as usize;
-                                block.full_text = format!("{}", C_BARS[idx]);
-                                Ok(block)
+                                Ok(I3Output::from_text(format!("{}", C_BARS[idx])))
                             }
                             _ => Err("invalid capacity"),
                         }

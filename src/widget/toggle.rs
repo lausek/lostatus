@@ -38,11 +38,9 @@ impl Widget for Toggle
                 Ok(_) => {
                     self.active = !self.active;
                     let icon = C_IO[if self.active { 1 } else { 0 }];
-                    let mut block = I3Output::default();
-                    block.full_text = format!("{}", icon);
-                    Ok(block)
+                    Ok(I3Output::from_text(format!("{}", icon)))
                 }
-                Err(_) => Err("cmd failed"),
+                _ => Err("cmd failed"),
             },
             _ => return None,
         };
