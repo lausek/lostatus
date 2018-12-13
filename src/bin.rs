@@ -10,6 +10,7 @@ extern crate i3ipc;
 extern crate serde;
 extern crate serde_json;
 
+mod config;
 #[macro_use]
 mod macros;
 mod app;
@@ -21,9 +22,8 @@ use std::sync::mpsc::{channel, Sender};
 use std::thread;
 
 use crate::app::App;
+use crate::config::{SHELL, WIDGETS};
 use crate::widget::{UpdateEvent, Widget};
-
-pub const SHELL: &str = "fish";
 
 pub fn shell<'a>(cmd: &str) -> std::io::Result<String>
 {
@@ -126,18 +126,10 @@ fn main() -> Result<(), &'static str>
         setup_panic_hook();
     }
 
-    // change these
-    let widgets: Vec<Box<dyn Widget>> = vec![
-        Box::new(widget::Toggle::new()),
-        Box::new(widget::Focus::new()),
-        Box::new(widget::Battery::new()),
-        Box::new(widget::DateTime::new()),
-    ];
-
     let (sender, receiver) = channel();
 
     spawn_system_sender(sender.clone());
     spawn_user_sender(sender.clone());
 
-    App::init(widgets).run(&receiver)
+    App::init(WIDGETS()).run(&receiver)
 }

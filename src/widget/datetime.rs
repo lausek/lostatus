@@ -1,12 +1,10 @@
 use std::time::Duration;
 
+use crate::config::widget::datetime::*;
 use crate::i3::I3Output;
 use crate::shell;
 use crate::widget::BlockResult;
 use crate::widget::{UpdateEvent, Widget};
-
-const INTERVAL: Duration = Duration::from_secs(30);
-const DATE_FORMAT: &str = "date +\"%H:%M / %d.%m.%Y\"";
 
 pub struct DateTime {}
 

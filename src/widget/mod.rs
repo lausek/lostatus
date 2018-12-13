@@ -12,9 +12,6 @@ pub use self::datetime::DateTime;
 pub use self::focus::Focus;
 pub use self::toggle::Toggle;
 
-pub const C_BARS: &'static [char] = &[' ', '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'];
-pub const C_IO: &'static [char] = &['I', 'O'];
-
 #[derive(Debug)]
 pub enum UpdateEvent
 {

@@ -1,11 +1,9 @@
 use std::str::FromStr;
 use std::time::Duration;
 
+use crate::config::{chars, widget::battery::*};
 use crate::i3::I3Output;
-use crate::widget::{BlockResult, UpdateEvent, Widget, C_BARS};
-
-const INTERVAL: Duration = Duration::from_secs(60);
-const FILE_PATH: &str = "/sys/class/power_supply/BAT0/capacity";
+use crate::widget::{BlockResult, UpdateEvent, Widget};
 
 pub struct Battery {}
 
@@ -29,7 +27,7 @@ impl Widget for Battery
                         match f64::from_str(content.as_ref()) {
                             Ok(capacity) => {
                                 let idx = (capacity / 101.0 * 9.0).floor() as usize;
-                                Ok(I3Output::from_text(format!("{}", C_BARS[idx])))
+                                Ok(I3Output::from_text(format!("{}", chars::BARS[idx])))
                             }
                             _ => Err("invalid capacity"),
                         }

@@ -2,10 +2,9 @@ use std::str::FromStr;
 use std::sync::mpsc::{Receiver, RecvTimeoutError};
 use std::time::Duration;
 
+use crate::config::app::*;
 use crate::scheduler::Scheduler;
 use crate::widget::{UpdateEvent, Widget};
-
-const DEFAULT_TIMEOUT: Duration = Duration::from_secs(5);
 
 pub struct App<T: Widget + ?Sized>
 {
@@ -71,7 +70,7 @@ where
             let event = if let Some(timeout) = self.timeout {
                 receiver.recv_timeout(timeout)
             } else {
-                receiver.recv_timeout(DEFAULT_TIMEOUT)
+                receiver.recv_timeout(INTERVAL)
             };
 
             match event {

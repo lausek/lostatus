@@ -2,11 +2,10 @@ use std::time::Duration;
 
 use i3ipc::event::Event::*;
 
+use crate::config::widget::focus::*;
 use crate::i3::I3Output;
 use crate::widget::BlockResult;
 use crate::widget::{UpdateEvent, UpdateEvent::*, Widget};
-
-const INTERVAL: Duration = Duration::from_secs(60);
 
 pub struct Focus {}
 

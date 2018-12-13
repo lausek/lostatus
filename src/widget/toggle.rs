@@ -1,10 +1,9 @@
 use std::time::Duration;
 
+use crate::config::{chars, widget::toggle::*};
 use crate::i3::I3Output;
 use crate::shell;
-use crate::widget::{BlockResult, UpdateEvent, UpdateEvent::*, Widget, C_IO};
-
-const INTERVAL: Duration = Duration::from_secs(30);
+use crate::widget::{BlockResult, UpdateEvent, UpdateEvent::*, Widget};
 
 #[derive(Debug, Default)]
 pub struct Toggle
@@ -37,7 +36,7 @@ impl Widget for Toggle
             User(_) if self.cmd.is_some() => match shell(self.cmd.as_ref().unwrap()) {
                 Ok(_) => {
                     self.active = !self.active;
-                    let icon = C_IO[if self.active { 1 } else { 0 }];
+                    let icon = chars::IO[if self.active { 1 } else { 0 }];
                     Ok(I3Output::from_text(format!("{}", icon)))
                 }
                 _ => Err("cmd failed"),
