@@ -26,13 +26,13 @@ impl Widget for Battery
             Ok(content) => {
                 let mut block = I3Output::default();
 
-                block.full_text = Some(match f64::from_str(content.as_ref()) {
+                block.full_text = match f64::from_str(content.as_ref()) {
                     Ok(capacity) => {
                         let idx = (capacity / 101.0 * 9.0).floor() as usize;
                         format!("{}", C_BARS[idx])
                     }
                     Err(_) => "invalid capacity".to_string(),
-                });
+                };
 
                 Some((Ok(block), Some(INTERVAL)))
             }

@@ -29,8 +29,11 @@ where
                 .collect::<Vec<_>>(),
         };
 
-        for widget in &mut app.widgets.iter_mut().enumerate() {
-            update(&mut app.scheduler, widget, &UpdateEvent::Time);
+        for (id, mut widget) in &mut app.widgets.iter_mut().enumerate() {
+            update(&mut app.scheduler, (id, &mut widget), &UpdateEvent::Time);
+            if widget.0.is_empty() {
+                widget.0 = format!("{}", crate::i3::I3Output::default());
+            }
         }
 
         app
@@ -117,10 +120,6 @@ where
         *cache = match i3output {
             Ok(mut i3output) => {
                 i3output.instance = Some(format!("{}", id));
-
-                if i3output.full_text.is_none() {
-                    i3output.full_text = Some(String::new());
-                }
 
                 format!("{}", i3output)
             }

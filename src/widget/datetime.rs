@@ -26,7 +26,7 @@ impl Widget for DateTime
             .expect("time is messed up");
         let info = from_timestamp(timestamp);
 
-        block.full_text = Some(format!("{:?}", info));
+        block.full_text = format!("{:?}", info);
 
         Some((Ok(block), Some(INTERVAL)))
     }

@@ -36,8 +36,7 @@ pub struct I3Output
     #[serde(skip_serializing_if = "Option::is_none")]
     pub instance: Internal,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub full_text: Internal,
+    pub full_text: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub short_text: Internal,
 
@@ -80,7 +79,7 @@ impl Default for I3Output
             name: None,
             instance: None,
 
-            full_text: None,
+            full_text: String::new(),
             short_text: None,
 
             color: None,

@@ -29,7 +29,7 @@ impl Widget for Focus
     {
         let mut block = I3Output::default();
         match evt {
-            System(box WindowEvent(evt)) => block.full_text = evt.container.name.clone(),
+            System(box WindowEvent(evt)) => block.full_text = evt.container.name.clone().unwrap(),
             _ => {}
         }
         Some((Ok(block), Some(INTERVAL)))
