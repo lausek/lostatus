@@ -2,12 +2,10 @@ use std::str::FromStr;
 use std::time::Duration;
 
 use crate::i3::I3Output;
-use crate::widget::BlockResult;
-use crate::widget::{UpdateEvent, Widget};
+use crate::widget::{BlockResult, UpdateEvent, Widget, C_BARS};
 
 const INTERVAL: Duration = Duration::from_secs(60);
 const FILE_PATH: &str = "/sys/class/power_supply/BAT0/capacity";
-const BAR_CHARS: &'static [char] = &[' ', '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'];
 
 pub struct Battery {}
 
@@ -31,7 +29,7 @@ impl Widget for Battery
                 block.full_text = Some(match f64::from_str(content.as_ref()) {
                     Ok(capacity) => {
                         let idx = (capacity / 101.0 * 9.0).floor() as usize;
-                        format!("{}", BAR_CHARS[idx])
+                        format!("{}", C_BARS[idx])
                     }
                     Err(_) => "invalid capacity".to_string(),
                 });

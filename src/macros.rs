@@ -21,8 +21,8 @@ macro_rules! debug_log {
 }
 
 macro_rules! i3print {
-    ($msg:expr) => {{ print!("{}", $msg); }};
     ($msg:expr, $($x:expr),*) => {{ i3print!(format!($msg, $($x),*)); }};
+    ($msg:expr) => {{ print!("{}", $msg); }};
 }
 
 macro_rules! i3flush {
