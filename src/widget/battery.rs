@@ -24,7 +24,7 @@ impl Widget for Battery
             Ok(content) => {
                 let result = {
                     if let Some(content) = content.split_whitespace().next() {
-                        match f64::from_str(content.as_ref()) {
+                        match f64::from_str(content) {
                             Ok(capacity) => {
                                 let idx = (capacity / 101.0 * 9.0).floor() as usize;
                                 Ok(I3Output::from_text(format!("{}", chars::BARS[idx])))

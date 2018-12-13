@@ -22,10 +22,10 @@ use std::sync::mpsc::{channel, Sender};
 use std::thread;
 
 use crate::app::App;
-use crate::config::{SHELL, WIDGETS};
-use crate::widget::{UpdateEvent, Widget};
+use crate::config::{widgets, SHELL};
+use crate::widget::UpdateEvent;
 
-pub fn shell<'a>(cmd: &str) -> std::io::Result<String>
+pub fn shell(cmd: &str) -> std::io::Result<String>
 {
     std::process::Command::new(SHELL)
         .args(&["-c", cmd])
@@ -78,7 +78,7 @@ fn spawn_user_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
             if input == "[" {
                 continue;
             }
-            if Some(',') == input.chars().next() {
+            if input.starts_with(',') {
                 input = input.split_off(1);
             }
 
@@ -131,5 +131,5 @@ fn main() -> Result<(), &'static str>
     spawn_system_sender(sender.clone());
     spawn_user_sender(sender.clone());
 
-    App::init(WIDGETS()).run(&receiver)
+    App::init(widgets()).run(&receiver)
 }

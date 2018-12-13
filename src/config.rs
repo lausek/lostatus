@@ -4,7 +4,7 @@ use crate::widget::*;
 
 // TODO: make declaration nicer with procedural macro?
 pub const SHELL: &str = "fish";
-pub fn WIDGETS() -> Vec<Box<dyn Widget>>
+pub fn widgets() -> Vec<Box<dyn Widget>>
 {
     vec![
         Box::new(Toggle::new()),
@@ -17,9 +17,8 @@ pub fn WIDGETS() -> Vec<Box<dyn Widget>>
 pub mod chars
 {
     pub const BRIGHTNESS: char = '☼';
-    pub const BARS: &'static [char] =
-        &[' ', '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'];
-    pub const IO: &'static [char] = &['0', '1'];
+    pub const BARS: &[char] = &[' ', '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'];
+    pub const IO: &[char] = &['0', '1'];
 }
 
 pub mod app
