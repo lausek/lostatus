@@ -57,7 +57,7 @@ where
     {
         use self::UpdateEvent::*;
 
-        i3print!("{ \"version\": 1 }");
+        i3print!("{ \"version\": 1, \"click_events\": true }");
 
         i3print!("[");
 
