@@ -25,6 +25,7 @@ pub fn widgets() -> Vec<Box<dyn Widget>>
 pub mod chars
 {
     pub const BRIGHTNESS: char = '☼';
+    pub const CONTINUE: char = '\u{2026}';
     pub const VOLUME: &[char] = &['\u{f00d}', '\u{f026}', '\u{f027}', '\u{f028}'];
     pub const BARS: &[char] = &[' ', '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'];
     pub const IO: &[char] = &['0', '1'];
@@ -54,6 +55,8 @@ pub mod widget
     pub mod focus
     {
         pub const INTERVAL: super::Duration = super::Duration::from_secs(60);
+        // +1 for adding continuation dots
+        pub const MAX_LENGTH: usize = 31;
     }
 
     pub mod scroll

@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use i3ipc::event::Event::*;
 
-use crate::config::widget::focus::*;
+use crate::config::{chars::CONTINUE, widget::focus::*};
 use crate::i3::I3Output;
 use crate::widget::BlockResult;
 use crate::widget::{UpdateEvent, UpdateEvent::*, Widget};
@@ -28,8 +28,17 @@ impl Widget for Focus
     {
         match evt {
             System(box WindowEvent(evt)) => {
-                let block = I3Output::from_text(evt.container.name.clone().unwrap());
-                Some((Ok(block), Some(INTERVAL)))
+                let result = if let Some(name) = evt.container.name.clone() {
+                    let output = if MAX_LENGTH < name.len() {
+                        format!("{} {}", &name[..MAX_LENGTH - 1], CONTINUE)
+                    } else {
+                        name
+                    };
+                    Ok(I3Output::from_text(output.to_string()))
+                } else {
+                    Err("no focus")
+                };
+                Some((result, Some(INTERVAL)))
             }
             _ => None,
         }
