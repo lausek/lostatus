@@ -6,9 +6,17 @@ use crate::widget::*;
 pub const SHELL: &str = "fish";
 pub fn widgets() -> Vec<Box<dyn Widget>>
 {
+    let volume = Scroll::new()
+        .command(Action::ScrollUp, "~/.config/scripts/volume up")
+        .command(Action::ScrollDown, "~/.config/scripts/volume down")
+        .command(Action::Status, "~/.config/scripts/volume");
+
+    let headset = Toggle::new().command("~/.config/scripts/headset-switch-toggle");
+
     vec![
         Box::new(Focus::new()),
-        Box::new(Toggle::new()),
+        Box::new(volume),
+        Box::new(headset),
         Box::new(Battery::new()),
         Box::new(DateTime::new()),
     ]
@@ -17,6 +25,7 @@ pub fn widgets() -> Vec<Box<dyn Widget>>
 pub mod chars
 {
     pub const BRIGHTNESS: char = '☼';
+    pub const VOLUME: &[char] = &['\u{f00d}', '\u{f026}', '\u{f027}', '\u{f028}'];
     pub const BARS: &[char] = &[' ', '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'];
     pub const IO: &[char] = &['0', '1'];
 }

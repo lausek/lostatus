@@ -21,23 +21,21 @@ impl Widget for Battery
     {
         // TODO: only do timed updates here
         match std::fs::read_to_string(FILE_PATH) {
-            Ok(content) => {
-                let result = {
-                    if let Some(content) = content.lines().next() {
-                        match f64::from_str(content) {
-                            Ok(capacity) => {
-                                let idx =
-                                    (capacity / 101.0 * chars::BARS.len() as f64).floor() as usize;
-                                Ok(I3Output::from_text(format!("{}", chars::BARS[idx])))
-                            }
-                            _ => Err("invalid capacity"),
+            Ok(content) => Some((
+                if let Some(content) = content.lines().next() {
+                    match f64::from_str(content) {
+                        Ok(capacity) => {
+                            let idx =
+                                (capacity / 101.0 * chars::BARS.len() as f64).floor() as usize;
+                            Ok(I3Output::from_text(format!("{}", chars::BARS[idx])))
                         }
-                    } else {
-                        Err("invalid capacity")
+                        _ => Err("invalid content"),
                     }
-                };
-                Some((result, Some(INTERVAL)))
-            }
+                } else {
+                    Err("invalid capacity")
+                },
+                Some(INTERVAL),
+            )),
             Err(_) => Some((Err("no battery"), None)),
         }
     }

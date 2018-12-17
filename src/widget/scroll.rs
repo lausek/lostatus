@@ -1,17 +1,17 @@
-use crate::config::{chars, widget::scroll::*};
+use crate::config::widget::scroll::*;
 use crate::i3::{I3Input, I3Output};
 use crate::shell;
 use crate::widget::{
-    i3action::*, BlockResult, BlockUpdateResult, MouseAction, UpdateEvent, UpdateEvent::*, Widget,
+    i3action::*, Action, BlockResult, BlockUpdateResult, UpdateEvent, UpdateEvent::*, Widget,
 };
 
 #[derive(Debug, Default)]
 pub struct Scroll
 {
     active: bool,
-    icon: String,
     cmd_up: Option<String>,
     cmd_down: Option<String>,
+    cmd_status: Option<String>,
 }
 
 impl Scroll
@@ -23,21 +23,12 @@ impl Scroll
         }
     }
 
-    pub fn icon(mut self, icon: &str) -> Self
-    {
-        self.icon = icon.to_string();
-        self
-    }
-
-    pub fn command(mut self, on: MouseAction, cmd: &str) -> Self
+    pub fn command(mut self, on: Action, cmd: &str) -> Self
     {
         match on {
-            MouseAction::ScrollUp => {
-                self.cmd_up = Some(cmd.to_string());
-            }
-            MouseAction::ScrollDown => {
-                self.cmd_down = Some(cmd.to_string());
-            }
+            Action::ScrollUp => self.cmd_up = Some(cmd.to_string()),
+            Action::ScrollDown => self.cmd_down = Some(cmd.to_string()),
+            Action::Status => self.cmd_status = Some(cmd.to_string()),
             _ => {}
         }
         self
@@ -46,7 +37,7 @@ impl Scroll
     fn exec(&self, cmd: &str) -> BlockResult
     {
         match shell(cmd) {
-            Ok(_) => Ok(I3Output::from_text(format!("{}", self.icon))),
+            Ok(content) => Ok(I3Output::from_text(format!("scroll: {}", content))),
             _ => Err("cmd failed"),
         }
     }
@@ -74,6 +65,13 @@ impl Widget for Scroll
                 }
                 _ => return None,
             },
+            Time => {
+                if let Some(cmd) = &self.cmd_status {
+                    self.exec(cmd.as_ref())
+                } else {
+                    Err("no status cmd")
+                }
+            }
             _ => return None,
         };
 

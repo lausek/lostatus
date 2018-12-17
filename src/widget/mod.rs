@@ -17,9 +17,10 @@ pub use self::toggle::Toggle;
 pub mod i3action
 {
     pub const I3_ACTION_LEFT: i64 = 1;
-    pub const I3_ACTION_RIGHT: i64 = 2;
-    pub const I3_ACTION_SCROLL_UP: i64 = 3;
-    pub const I3_ACTION_SCROLL_DOWN: i64 = 4;
+    pub const I3_ACTION_MIDDLE: i64 = 2;
+    pub const I3_ACTION_RIGHT: i64 = 3;
+    pub const I3_ACTION_SCROLL_UP: i64 = 4;
+    pub const I3_ACTION_SCROLL_DOWN: i64 = 5;
 }
 
 pub type BlockResult = Result<I3Output, &'static str>;
@@ -34,12 +35,14 @@ pub enum UpdateEvent
 }
 
 #[derive(Debug, PartialEq)]
-pub enum MouseAction
+pub enum Action
 {
     Left,
+    Middle,
     Right,
     ScrollUp,
     ScrollDown,
+    Status,
 }
 
 pub trait Widget

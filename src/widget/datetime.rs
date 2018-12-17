@@ -20,11 +20,11 @@ impl Widget for DateTime
 {
     fn update(&mut self, evt: &UpdateEvent) -> Option<(BlockResult, Option<Duration>)>
     {
-        match evt {
-            &UpdateEvent::Time => {
+        match *evt {
+            UpdateEvent::Time => {
                 let result = match shell(DATE_FORMAT) {
                     Ok(date) => {
-                        let normalized = date.split('\n').next().unwrap();
+                        let normalized = date.lines().next().unwrap();
                         Ok(I3Output::from_text(normalized.to_string()))
                     }
                     _ => Err("date failed"),

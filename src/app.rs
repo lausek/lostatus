@@ -89,7 +89,8 @@ where
                     self.timeout = self.scheduler.next_update();
                 }
                 Ok(User(input)) => {
-                    let id = usize::from_str(input.instance.as_ref()).unwrap();
+                    let id = usize::from_str(input.instance.as_ref())
+                        .expect("invalid instance id supplied");
                     if let Some(widget) = self.widgets.get_mut(id) {
                         update(&mut self.scheduler, (id, widget), &UpdateEvent::User(input));
                     }
@@ -98,10 +99,12 @@ where
                 Err(RecvTimeoutError::Disconnected) => panic!("sending channel got killed"),
             }
 
+            // test if events occurred while working on another one
             for id in self.scheduler.get_due_ids() {
                 let mut widget = self.widgets.get_mut(id).expect("inconsistent ids");
                 update(&mut self.scheduler, (id, &mut widget), &UpdateEvent::Time);
             }
+            // set timed update for the next cycle
             self.timeout = self.scheduler.next_update();
 
             self.render();
