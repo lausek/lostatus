@@ -31,6 +31,8 @@ where
         for (id, mut widget) in &mut app.widgets.iter_mut().enumerate() {
             update(&mut app.scheduler, (id, &mut widget), &UpdateEvent::Time);
             if widget.0.is_empty() {
+                // TODO: this needs an instance id or it will crash on click
+                //       e.g. battery in qemu does not exist -> no instance id set
                 widget.0 = format!("{}", crate::i3::I3Output::default());
             }
         }

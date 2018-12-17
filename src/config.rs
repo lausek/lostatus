@@ -7,8 +7,8 @@ pub const SHELL: &str = "fish";
 pub fn widgets() -> Vec<Box<dyn Widget>>
 {
     vec![
-        Box::new(Toggle::new()),
         Box::new(Focus::new()),
+        Box::new(Toggle::new()),
         Box::new(Battery::new()),
         Box::new(DateTime::new()),
     ]

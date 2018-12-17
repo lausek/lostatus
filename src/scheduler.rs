@@ -39,7 +39,7 @@ impl Scheduler
                 Ok(duration) => Some(duration),
                 // TODO: update is overdue. this should do something
                 Err(_) => {
-                    debug_log!("scheduler queue: {:?}", self.slots);
+                    debug_log!("scheduler queue: {:?}", next);
                     None
                 }
             }

@@ -23,7 +23,10 @@ impl Widget for DateTime
         match evt {
             &UpdateEvent::Time => {
                 let result = match shell(DATE_FORMAT) {
-                    Ok(date) => Ok(I3Output::from_text(format!("{:?}", date))),
+                    Ok(date) => {
+                        let normalized = date.split('\n').next().unwrap();
+                        Ok(I3Output::from_text(normalized.to_string()))
+                    }
                     _ => Err("date failed"),
                 };
                 Some((result, Some(INTERVAL)))
