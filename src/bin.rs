@@ -1,4 +1,5 @@
 #![feature(box_patterns)]
+#![feature(self_in_typedefs)]
 
 #[macro_use]
 extern crate lazy_static;
@@ -24,6 +25,12 @@ use std::thread;
 use crate::app::App;
 use crate::config::{widgets, SHELL};
 use crate::widget::UpdateEvent;
+
+pub fn get_percentage_char(percentage: f64, from: &[char]) -> char
+{
+    let idx = (percentage / 101.0 * from.len() as f64).floor() as usize;
+    from[idx]
+}
 
 pub fn shell(cmd: &str) -> std::io::Result<String>
 {

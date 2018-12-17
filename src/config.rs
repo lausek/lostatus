@@ -1,5 +1,7 @@
+use std::str::FromStr;
 use std::time::Duration;
 
+use crate::get_percentage_char;
 use crate::widget::*;
 
 // TODO: make declaration nicer with procedural macro?
@@ -9,7 +11,25 @@ pub fn widgets() -> Vec<Box<dyn Widget>>
     let volume = Scroll::new()
         .command(Action::ScrollUp, "~/.config/scripts/volume up")
         .command(Action::ScrollDown, "~/.config/scripts/volume down")
-        .command(Action::Status, "~/.config/scripts/volume");
+        .command(Action::Status, "~/.config/scripts/volume")
+        .formatter(|state| {
+            state
+                .cmd_status
+                .as_ref()
+                .map_or(Err("no status cmd"), |cmd| {
+                    match crate::shell(cmd.as_ref()) {
+                        Ok(output) => {
+                            let status = output.lines().next().unwrap().to_string();
+                            let icon = match f64::from_str(status.as_ref()) {
+                                Ok(volume) => get_percentage_char(volume, &chars::VOLUME),
+                                _ => panic!("could not interpret status command as number"),
+                            };
+                            Ok(format!("{} {}", icon, status))
+                        }
+                        Err(_) => Err("status command failed"),
+                    }
+                })
+        });
 
     let headset = Toggle::new().command("~/.config/scripts/headset-switch-toggle");
 

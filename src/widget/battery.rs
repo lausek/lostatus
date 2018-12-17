@@ -2,6 +2,7 @@ use std::str::FromStr;
 use std::time::Duration;
 
 use crate::config::{chars, widget::battery::*};
+use crate::get_percentage_char;
 use crate::i3::I3Output;
 use crate::widget::{BlockResult, UpdateEvent, Widget};
 
@@ -25,9 +26,8 @@ impl Widget for Battery
                 if let Some(content) = content.lines().next() {
                     match f64::from_str(content) {
                         Ok(capacity) => {
-                            let idx =
-                                (capacity / 101.0 * chars::BARS.len() as f64).floor() as usize;
-                            Ok(I3Output::from_text(format!("{}", chars::BARS[idx])))
+                            let symbol = get_percentage_char(capacity, &chars::BARS);
+                            Ok(I3Output::from_text(format!("{}", symbol)))
                         }
                         _ => Err("invalid content"),
                     }
