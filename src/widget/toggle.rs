@@ -1,9 +1,9 @@
 use std::time::Duration;
 
 use crate::config::{chars, widget::toggle::*};
-use crate::i3::I3Output;
+use crate::i3::{I3Input, I3Output};
 use crate::shell;
-use crate::widget::{BlockResult, UpdateEvent, UpdateEvent::*, Widget};
+use crate::widget::{i3action::*, BlockResult, UpdateEvent, UpdateEvent::*, Widget};
 
 #[derive(Debug, Default)]
 pub struct Toggle
@@ -33,7 +33,10 @@ impl Widget for Toggle
     fn update(&mut self, evt: &UpdateEvent) -> Option<(BlockResult, Option<Duration>)>
     {
         let output = match evt {
-            User(_) if self.cmd.is_some() => match shell(self.cmd.as_ref().unwrap()) {
+            User(I3Input {
+                button: I3_ACTION_LEFT,
+                ..
+            }) if self.cmd.is_some() => match shell(self.cmd.as_ref().unwrap()) {
                 Ok(_) => {
                     self.active = !self.active;
                     let icon = chars::IO[if self.active { 1 } else { 0 }];
@@ -43,7 +46,6 @@ impl Widget for Toggle
             },
             _ => return None,
         };
-
         Some((output, Some(INTERVAL)))
     }
 }

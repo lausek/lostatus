@@ -47,6 +47,11 @@ pub mod widget
         pub const INTERVAL: super::Duration = super::Duration::from_secs(60);
     }
 
+    pub mod scroll
+    {
+        pub const INTERVAL: super::Duration = super::Duration::from_secs(60);
+    }
+
     pub mod toggle
     {
         pub const INTERVAL: super::Duration = super::Duration::from_secs(30);
