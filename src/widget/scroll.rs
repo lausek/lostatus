@@ -45,7 +45,7 @@ impl Scroll
     fn exec(&self, cmd: &str) -> BlockResult
     {
         match shell(cmd) {
-            Ok(content) => match (self.fmt_callback)(&self) {
+            Ok(_content) => match (self.fmt_callback)(&self) {
                 Ok(status) => Ok(I3Output::from_text(status)),
                 Err(msg) => Err(msg),
             },

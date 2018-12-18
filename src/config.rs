@@ -2,16 +2,16 @@ use std::str::FromStr;
 use std::time::Duration;
 
 use crate::get_percentage_char;
-use crate::widget::*;
+use crate::widget::{Action::*, *};
 
 // TODO: make declaration nicer with procedural macro?
 pub const SHELL: &str = "fish";
 pub fn widgets() -> Vec<Box<dyn Widget>>
 {
     let volume = Scroll::new()
-        .command(Action::ScrollUp, "~/.config/scripts/volume up")
-        .command(Action::ScrollDown, "~/.config/scripts/volume down")
-        .command(Action::Status, "~/.config/scripts/volume")
+        .command(ScrollUp, "~/.config/scripts/volume up")
+        .command(ScrollDown, "~/.config/scripts/volume down")
+        .command(Status, "~/.config/scripts/volume")
         .formatter(|state| {
             state
                 .cmd_status
@@ -31,14 +31,11 @@ pub fn widgets() -> Vec<Box<dyn Widget>>
                 })
         });
 
-    // TODO: this blog is way too slow
-    let brightness = Scroll::new()
-        .command(Action::ScrollUp, "~/.config/scripts/brightness-lostatus +5")
-        .command(
-            Action::ScrollDown,
-            "~/.config/scripts/brightness-lostatus -5",
-        )
-        .command(Action::Status, "~/.config/scripts/brightness-lostatus")
+    // TODO: this block is way too slow
+    let _brightness = Scroll::new()
+        .command(ScrollUp, "~/.config/scripts/brightness-lostatus +5")
+        .command(ScrollDown, "~/.config/scripts/brightness-lostatus -5")
+        .command(Status, "~/.config/scripts/brightness-lostatus")
         .formatter(|state| {
             state
                 .cmd_status
@@ -58,7 +55,9 @@ pub fn widgets() -> Vec<Box<dyn Widget>>
                 })
         });
 
-    let headset = Toggle::new().command("~/.config/scripts/headset-switch-toggle");
+    let headset = Toggle::new()
+        .command("~/.config/scripts/headset-switch-toggle")
+        .formatter(|_| Ok("Headset".to_string()));
 
     vec![
         Box::new(Focus::new()),
@@ -72,11 +71,12 @@ pub fn widgets() -> Vec<Box<dyn Widget>>
 
 pub mod chars
 {
+    pub const BARS: &[char] = &[' ', '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'];
     pub const BRIGHTNESS: char = '☼';
     pub const CONTINUE: char = '\u{2026}';
-    pub const VOLUME: &[char] = &['\u{f00d}', '\u{f026}', '\u{f027}', '\u{f028}'];
-    pub const BARS: &[char] = &[' ', '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'];
     pub const IO: &[char] = &['0', '1'];
+    pub const MUSIC: char = '\u{e405}';
+    pub const VOLUME: &[char] = &['\u{f00d}', '\u{f026}', '\u{f027}', '\u{f028}'];
 }
 
 pub mod app

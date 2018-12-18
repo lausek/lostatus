@@ -109,8 +109,6 @@ where
 
             self.render();
         }
-
-        Ok(())
     }
 }
 
