@@ -65,7 +65,7 @@ impl I3Output
 {
     pub fn from_text<T>(full_text: T) -> Self
     where
-        T: AsRef<str> + ToString,
+        T: ToString,
     {
         Self {
             full_text: full_text.to_string(),
