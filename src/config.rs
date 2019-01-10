@@ -4,8 +4,21 @@ use std::time::Duration;
 use crate::get_percentage_char;
 use crate::widget::{Action::*, *};
 
+pub struct Color
+{
+    pub foreground: &'static str,
+    pub background: &'static str,
+}
+
+pub struct ColorScheme
+{
+    pub basic: Color,
+    pub good: Color,
+    pub degraded: Color,
+    pub bad: Color,
+}
+
 // TODO: make declaration nicer with procedural macro?
-pub const SHELL: &str = "fish";
 pub fn widgets() -> Vec<Box<dyn Widget>>
 {
     let volume = Scroll::new()
@@ -55,15 +68,15 @@ pub fn widgets() -> Vec<Box<dyn Widget>>
                 })
         });
 
-    let headset = Toggle::new()
+    let speakers = Toggle::new()
         .command("~/.config/scripts/headset-switch-toggle")
-        .formatter(|_| Ok("Headset".to_string()));
+        .formatter(|_| Ok("Speakers".to_string()));
 
     vec![
         Box::new(Focus::new()),
         //Box::new(brightness),
         Box::new(volume),
-        Box::new(headset),
+        Box::new(speakers),
         Box::new(Battery::new()),
         Box::new(DateTime::new()),
     ]
@@ -81,7 +94,27 @@ pub mod chars
 
 pub mod app
 {
-    pub const INTERVAL: super::Duration = super::Duration::from_secs(4);
+    use super::{Color, ColorScheme, Duration};
+    pub const SHELL: &str = "fish";
+    pub const INTERVAL: Duration = super::Duration::from_secs(4);
+    pub const COLOR_SCHEME: ColorScheme = ColorScheme {
+        basic: Color {
+            foreground: "#cfd8dc",
+            background: "#222d32",
+        },
+        good: Color {
+            foreground: "#1d1f21",
+            background: "#99b938",
+        },
+        degraded: Color {
+            foreground: "#1d1f21",
+            background: "#fe7e29",
+        },
+        bad: Color {
+            foreground: "#1d1f21",
+            background: "#ff5252",
+        },
+    };
 }
 
 pub mod widget

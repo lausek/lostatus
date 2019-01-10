@@ -23,7 +23,7 @@ use std::sync::mpsc::{channel, Sender};
 use std::thread;
 
 use crate::app::App;
-use crate::config::{widgets, SHELL};
+use crate::config::{app::SHELL, widgets};
 use crate::widget::UpdateEvent;
 
 pub fn get_percentage_char(percentage: f64, from: &[char]) -> char

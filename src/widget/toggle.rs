@@ -40,15 +40,6 @@ impl Widget for Toggle
 {
     fn update(&mut self, evt: &UpdateEvent) -> Option<(BlockResult, Option<Duration>)>
     {
-        let icon_from = |active: bool| chars::IO[if active { 1 } else { 0 }];
-        let build = |active: bool, msg: String| {
-            Ok(I3Output::from_text(format!(
-                "{} {}",
-                icon_from(active),
-                msg
-            )))
-        };
-
         let output = match evt {
             User(I3Input {
                 button: I3_ACTION_LEFT,
@@ -56,6 +47,7 @@ impl Widget for Toggle
             }) if self.cmd.is_some() => match shell(self.cmd.as_ref().unwrap()) {
                 Ok(_) => {
                     self.active = !self.active;
+
                     build(
                         self.active,
                         (self.fmt_callback)(&self).unwrap_or(String::new()),
@@ -83,4 +75,23 @@ impl std::default::Default for Toggle
             fmt_callback: Box::new(|_| Ok(String::new())),
         }
     }
+}
+
+fn build(active: bool, msg: String) -> Result<I3Output, &'static str>
+{
+    use crate::config::app::COLOR_SCHEME;
+
+    let icon_from = |active: bool| chars::IO[if active { 1 } else { 0 }];
+
+    let mut output = I3Output::from_text(format!("{} {}", icon_from(active), msg));
+
+    if active {
+        output.color = Some(COLOR_SCHEME.good.foreground.to_string());
+        output.background = Some(COLOR_SCHEME.good.background.to_string());
+    } else {
+        output.color = Some(COLOR_SCHEME.bad.foreground.to_string());
+        output.background = Some(COLOR_SCHEME.bad.background.to_string());
+    }
+
+    Ok(output)
 }

@@ -116,12 +116,22 @@ fn update<T>(scheduler: &mut Scheduler, widget: (usize, &mut (String, Box<T>)), 
 where
     T: Widget + ?Sized,
 {
+    use crate::config::app::COLOR_SCHEME;
+
     let (id, (cache, widget)) = widget;
     // if `update` returns None: nothing to update
     if let Some((i3output, next_update)) = widget.update(evt) {
         *cache = match i3output {
             Ok(mut i3output) => {
                 i3output.instance = Some(format!("{}", id));
+
+                if i3output.color.is_none() {
+                    i3output.color = Some(COLOR_SCHEME.basic.foreground.to_string());
+                }
+
+                if i3output.background.is_none() {
+                    i3output.background = Some(COLOR_SCHEME.basic.background.to_string());
+                }
 
                 format!("{}", i3output)
             }
