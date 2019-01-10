@@ -25,7 +25,7 @@ impl Widget for DateTime
                 let result = match shell(DATE_FORMAT) {
                     Ok(date) => {
                         let normalized = date.lines().next().unwrap();
-                        Ok(I3Output::from_text(normalized.to_string()))
+                        Ok(I3Output::from_text(normalized))
                     }
                     _ => Err("date failed"),
                 };

@@ -3,6 +3,7 @@ use std::sync::mpsc::{Receiver, RecvTimeoutError};
 use std::time::Duration;
 
 use crate::config::app::*;
+use crate::i3::I3Output;
 use crate::scheduler::Scheduler;
 use crate::widget::{UpdateEvent, Widget};
 
@@ -45,12 +46,14 @@ where
         i3print!("\n[");
 
         let mut iter = self.widgets.iter();
+        let separator = I3Output::from_text("|");
 
         if let Some((ref first, _)) = iter.next() {
             i3print!(first);
         }
 
         for (ref block, _) in iter {
+            i3print!(",{}", separator);
             i3print!(",{}", block);
         }
 

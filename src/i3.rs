@@ -51,10 +51,9 @@ pub struct I3Output
     #[serde(skip_serializing_if = "Option::is_none")]
     pub border: Internal,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub separator: Internal,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub separator_block_width: Internal,
+    pub separator: bool,
+    pub separator_block_width: u32,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub urgent: Internal,
 
@@ -64,10 +63,12 @@ pub struct I3Output
 
 impl I3Output
 {
-    pub fn from_text(full_text: String) -> Self
+    pub fn from_text<T>(full_text: T) -> Self
+    where
+        T: AsRef<str> + ToString,
     {
         Self {
-            full_text,
+            full_text: full_text.to_string(),
             ..Self::default()
         }
     }
@@ -86,6 +87,8 @@ impl Default for I3Output
 {
     fn default() -> Self
     {
+        use crate::config::app::COLOR_SCHEME;
+
         Self {
             name: None,
             instance: None,
@@ -93,14 +96,15 @@ impl Default for I3Output
             full_text: String::new(),
             short_text: None,
 
-            color: None,
-            background: None,
+            color: Some(COLOR_SCHEME.basic.foreground.to_string()),
+            background: Some(COLOR_SCHEME.basic.background.to_string()),
             min_width: None,
             align: None,
             border: None,
 
-            separator: None,
-            separator_block_width: None,
+            separator: false,
+            separator_block_width: 0,
+
             urgent: None,
             markup: None,
         }
