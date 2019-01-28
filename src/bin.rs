@@ -1,5 +1,6 @@
 #![feature(box_patterns)]
 #![feature(self_in_typedefs)]
+#![feature(bind_by_move_pattern_guards)]
 
 #[macro_use]
 extern crate lazy_static;
@@ -32,21 +33,15 @@ pub fn get_percentage_char(percentage: f64, from: &[char]) -> char
     from[idx]
 }
 
-pub fn shell(cmd: &str) -> std::io::Result<String>
+pub fn shell(cmd: &str) -> Result<String, String>
 {
-    std::process::Command::new(SHELL)
+    match std::process::Command::new(SHELL)
         .args(&["-c", cmd])
         .output()
-        .map(|buffer| {
-            if !buffer.status.success() {
-                panic!(format!(
-                    "command `{}` failed: `{:?}`",
-                    cmd,
-                    buffer.status.code()
-                ));
-            }
-            String::from_utf8(buffer.stdout).unwrap()
-        })
+    {
+        Ok(buffer) if buffer.status.success() => Ok(String::from_utf8(buffer.stdout).unwrap()),
+        err => Err(format!("{:?}", err)),
+    }
 }
 
 fn spawn_system_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
