@@ -4,24 +4,22 @@ mod focus;
 mod scroll;
 mod toggle;
 
-use std::time::Duration;
-
-use crate::i3::{I3Input, I3Output};
+pub use crate::{app::*, config::*};
 
 pub use self::battery::Battery;
 pub use self::datetime::DateTime;
 pub use self::focus::Focus;
 pub use self::scroll::Scroll;
 pub use self::toggle::Toggle;
+pub use self::UpdateEvent::*;
 
-pub mod i3action
-{
-    pub const I3_ACTION_LEFT: i64 = 1;
-    pub const I3_ACTION_MIDDLE: i64 = 2;
-    pub const I3_ACTION_RIGHT: i64 = 3;
-    pub const I3_ACTION_SCROLL_UP: i64 = 4;
-    pub const I3_ACTION_SCROLL_DOWN: i64 = 5;
-}
+pub use std::time::Duration;
+
+pub const I3_ACTION_LEFT: i64 = 1;
+pub const I3_ACTION_MIDDLE: i64 = 2;
+pub const I3_ACTION_RIGHT: i64 = 3;
+pub const I3_ACTION_SCROLL_UP: i64 = 4;
+pub const I3_ACTION_SCROLL_DOWN: i64 = 5;
 
 pub type BlockResult = Result<I3Output, &'static str>;
 pub type BlockUpdateResult = Option<(BlockResult, Option<Duration>)>;

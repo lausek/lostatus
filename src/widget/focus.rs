@@ -1,11 +1,6 @@
-use std::time::Duration;
+use super::*;
 
 use i3ipc::event::Event::*;
-
-use crate::config::{chars::CONTINUE, widget::focus::*};
-use crate::i3::I3Output;
-use crate::widget::BlockResult;
-use crate::widget::{UpdateEvent, UpdateEvent::*, Widget};
 
 pub struct Focus {}
 
@@ -29,8 +24,8 @@ impl Widget for Focus
         match evt {
             System(box WindowEvent(evt)) => {
                 let result = if let Some(name) = evt.container.name.clone() {
-                    let output = if MAX_LENGTH < name.len() {
-                        format!("{} {}", &name[..MAX_LENGTH - 1], CONTINUE)
+                    let output = if FOCUS_MAX_LENGTH < name.len() {
+                        format!("{} {}", &name[..FOCUS_MAX_LENGTH - 1], chars::CONTINUE)
                     } else {
                         name
                     };
@@ -38,7 +33,7 @@ impl Widget for Focus
                 } else {
                     Err("no focus")
                 };
-                Some((result, Some(INTERVAL)))
+                Some((result, Some(FOCUS_INTERVAL)))
             }
             _ => None,
         }

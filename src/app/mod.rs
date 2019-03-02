@@ -1,11 +1,18 @@
+pub mod i3;
+#[macro_use]
+pub mod macros;
+pub mod scheduler;
+pub mod util;
+
+pub use self::i3::*;
+
+use self::scheduler::Scheduler;
+use crate::config::*;
+use crate::widget::{UpdateEvent, Widget};
+
 use std::str::FromStr;
 use std::sync::mpsc::{Receiver, RecvTimeoutError};
 use std::time::Duration;
-
-use crate::config::app::*;
-use crate::i3::I3Output;
-use crate::scheduler::Scheduler;
-use crate::widget::{UpdateEvent, Widget};
 
 pub struct App<T: Widget + ?Sized>
 {
@@ -34,7 +41,7 @@ where
             if widget.0.is_empty() {
                 // TODO: this needs an instance id or it will crash on click
                 //       e.g. battery in qemu does not exist -> no instance id set
-                widget.0 = format!("{}", crate::i3::I3Output::default());
+                widget.0 = format!("{}", I3Output::default());
             }
         }
 
@@ -119,7 +126,7 @@ fn update<T>(scheduler: &mut Scheduler, widget: (usize, &mut (String, Box<T>)), 
 where
     T: Widget + ?Sized,
 {
-    use crate::config::app::COLOR_SCHEME;
+    use crate::config::COLOR_SCHEME;
 
     let (id, (cache, widget)) = widget;
     // if `update` returns None: nothing to update

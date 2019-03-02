@@ -12,37 +12,17 @@ extern crate i3ipc;
 extern crate serde;
 extern crate serde_json;
 
-mod config;
 #[macro_use]
-mod macros;
 mod app;
-mod i3;
-mod scheduler;
+mod config;
 mod widget;
+
+pub use crate::app::{util::*, App};
+use crate::config::widgets;
+use crate::widget::UpdateEvent;
 
 use std::sync::mpsc::{channel, Sender};
 use std::thread;
-
-use crate::app::App;
-use crate::config::{app::SHELL, widgets};
-use crate::widget::UpdateEvent;
-
-pub fn get_percentage_char(percentage: f64, from: &[char]) -> char
-{
-    let idx = (percentage / 101.0 * from.len() as f64).floor() as usize;
-    from[idx]
-}
-
-pub fn shell(cmd: &str) -> Result<String, String>
-{
-    match std::process::Command::new(SHELL)
-        .args(&["-c", cmd])
-        .output()
-    {
-        Ok(buffer) if buffer.status.success() => Ok(String::from_utf8(buffer.stdout).unwrap()),
-        err => Err(format!("{:?}", err)),
-    }
-}
 
 fn spawn_system_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
 {
@@ -71,7 +51,7 @@ fn spawn_system_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<(
 
 fn spawn_user_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
 {
-    use crate::i3::I3Input;
+    use crate::app::I3Input;
     use std::io::BufRead;
 
     thread::spawn(move || {

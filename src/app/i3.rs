@@ -87,7 +87,7 @@ impl Default for I3Output
 {
     fn default() -> Self
     {
-        use crate::config::app::COLOR_SCHEME;
+        use crate::config::COLOR_SCHEME;
 
         Self {
             name: None,

@@ -1,9 +1,4 @@
-use std::time::Duration;
-
-use crate::config::{chars, widget::toggle::*};
-use crate::i3::{I3Input, I3Output};
-use crate::shell;
-use crate::widget::{i3action::*, BlockResult, UpdateEvent, UpdateEvent::*, Widget};
+use super::*;
 
 pub struct Toggle
 {
@@ -79,7 +74,7 @@ impl std::default::Default for Toggle
 
 fn build(active: bool, msg: String) -> Result<I3Output, &'static str>
 {
-    use crate::config::app::COLOR_SCHEME;
+    use crate::config::COLOR_SCHEME;
 
     let icon_from = |active: bool| chars::IO[if active { 1 } else { 0 }];
 

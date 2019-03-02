@@ -1,10 +1,4 @@
-use std::time::Duration;
-
-use crate::config::widget::datetime::*;
-use crate::i3::I3Output;
-use crate::shell;
-use crate::widget::BlockResult;
-use crate::widget::{UpdateEvent, Widget};
+use super::*;
 
 pub struct DateTime {}
 
@@ -22,14 +16,14 @@ impl Widget for DateTime
     {
         match *evt {
             UpdateEvent::Time => {
-                let result = match shell(DATE_FORMAT) {
+                let result = match shell(DATETIME_FORMAT) {
                     Ok(date) => {
                         let normalized = date.lines().next().unwrap();
                         Ok(I3Output::from_text(normalized))
                     }
                     _ => Err("date failed"),
                 };
-                Some((result, Some(INTERVAL)))
+                Some((result, Some(DATETIME_INTERVAL)))
             }
             _ => None,
         }

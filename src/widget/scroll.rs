@@ -1,9 +1,4 @@
-use crate::config::widget::scroll::*;
-use crate::i3::{I3Input, I3Output};
-use crate::shell;
-use crate::widget::{
-    i3action::*, Action, BlockResult, BlockUpdateResult, UpdateEvent, UpdateEvent::*, Widget,
-};
+use super::*;
 
 pub struct Scroll
 {

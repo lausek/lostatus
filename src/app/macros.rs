@@ -9,7 +9,7 @@ lazy_static! {
 macro_rules! debug_log {
     ($msg:expr) => {if cfg!(feature = "debug") {
         use std::io::Write;
-        use crate::macros::LOG;
+        use crate::app::macros::LOG;
         if let Ok(mut lock) = LOG.lock() {
             lock.write_all(b"\n").unwrap();
             lock.write_all($msg.as_bytes()).unwrap();

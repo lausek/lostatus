@@ -1,8 +1,29 @@
 use std::str::FromStr;
 use std::time::Duration;
 
-use crate::get_percentage_char;
+use crate::app::util::*;
 use crate::widget::{Action::*, *};
+
+pub const SHELL: &str = "fish";
+pub const INTERVAL: Duration = Duration::from_secs(4);
+pub const COLOR_SCHEME: ColorScheme = ColorScheme {
+    basic: Color {
+        foreground: "#cfd8dc",
+        background: "#222d32",
+    },
+    good: Color {
+        foreground: "#1d1f21",
+        background: "#99b938",
+    },
+    degraded: Color {
+        foreground: "#1d1f21",
+        background: "#fe7e29",
+    },
+    bad: Color {
+        foreground: "#1d1f21",
+        background: "#ff5252",
+    },
+};
 
 pub struct Color
 {
@@ -18,6 +39,17 @@ pub struct ColorScheme
     pub bad: Color,
 }
 
+pub fn shell(cmd: &str) -> Result<String, String>
+{
+    match std::process::Command::new(SHELL)
+        .args(&["-c", cmd])
+        .output()
+    {
+        Ok(buffer) if buffer.status.success() => Ok(String::from_utf8(buffer.stdout).unwrap()),
+        err => Err(format!("{:?}", err)),
+    }
+}
+
 // TODO: make declaration nicer with procedural macro?
 pub fn widgets() -> Vec<Box<dyn Widget>>
 {
@@ -29,18 +61,16 @@ pub fn widgets() -> Vec<Box<dyn Widget>>
             state
                 .cmd_status
                 .as_ref()
-                .map_or(Err("no status cmd"), |cmd| {
-                    match crate::shell(cmd.as_ref()) {
-                        Ok(output) => {
-                            let status = output.lines().next().unwrap().to_string();
-                            let icon = match f64::from_str(status.as_ref()) {
-                                Ok(volume) => get_percentage_char(volume, &chars::VOLUME),
-                                _ => panic!("could not interpret status command as number"),
-                            };
-                            Ok(format!("{} {}", icon, status))
-                        }
-                        Err(_) => Err("status command failed"),
+                .map_or(Err("no status cmd"), |cmd| match shell(cmd.as_ref()) {
+                    Ok(output) => {
+                        let status = output.lines().next().unwrap().to_string();
+                        let icon = match f64::from_str(status.as_ref()) {
+                            Ok(volume) => get_percentage_char(volume, &chars::VOLUME),
+                            _ => panic!("could not interpret status command as number"),
+                        };
+                        Ok(format!("{} {}", icon, status))
                     }
+                    Err(_) => Err("status command failed"),
                 })
         });
 
@@ -53,18 +83,16 @@ pub fn widgets() -> Vec<Box<dyn Widget>>
             state
                 .cmd_status
                 .as_ref()
-                .map_or(Err("no status cmd"), |cmd| {
-                    match crate::shell(cmd.as_ref()) {
-                        Ok(output) => {
-                            let status = output.lines().next().unwrap().to_string();
-                            let icon = match f64::from_str(status.as_ref()) {
-                                Ok(volume) => get_percentage_char(volume, &chars::VOLUME),
-                                _ => panic!("could not interpret status command as number"),
-                            };
-                            Ok(format!("{} {}", icon, status))
-                        }
-                        Err(_) => Err("status command failed"),
+                .map_or(Err("no status cmd"), |cmd| match shell(cmd.as_ref()) {
+                    Ok(output) => {
+                        let status = output.lines().next().unwrap().to_string();
+                        let icon = match f64::from_str(status.as_ref()) {
+                            Ok(volume) => get_percentage_char(volume, &chars::VOLUME),
+                            _ => panic!("could not interpret status command as number"),
+                        };
+                        Ok(format!("{} {}", icon, status))
                     }
+                    Err(_) => Err("status command failed"),
                 })
         });
 
@@ -92,61 +120,15 @@ pub mod chars
     pub const VOLUME: &[char] = &['\u{f00d}', '\u{f026}', '\u{f027}', '\u{f028}'];
 }
 
-pub mod app
-{
-    use super::{Color, ColorScheme, Duration};
-    pub const SHELL: &str = "fish";
-    pub const INTERVAL: Duration = super::Duration::from_secs(4);
-    pub const COLOR_SCHEME: ColorScheme = ColorScheme {
-        basic: Color {
-            foreground: "#cfd8dc",
-            background: "#222d32",
-        },
-        good: Color {
-            foreground: "#1d1f21",
-            background: "#99b938",
-        },
-        degraded: Color {
-            foreground: "#1d1f21",
-            background: "#fe7e29",
-        },
-        bad: Color {
-            foreground: "#1d1f21",
-            background: "#ff5252",
-        },
-    };
-}
+pub const BATTERY_INTERVAL: Duration = Duration::from_secs(60);
+pub const BATTERY_FILE_PATH: &str = "/sys/class/power_supply/BAT0/capacity";
 
-pub mod widget
-{
-    use std::time::Duration;
+pub const DATETIME_INTERVAL: Duration = Duration::from_secs(30);
+pub const DATETIME_FORMAT: &str = "date +\"%H:%M / %d.%m.%Y\"";
 
-    pub mod battery
-    {
-        pub const INTERVAL: super::Duration = super::Duration::from_secs(60);
-        pub const FILE_PATH: &str = "/sys/class/power_supply/BAT0/capacity";
-    }
+pub const FOCUS_INTERVAL: Duration = Duration::from_secs(60);
+// +1 for adding continuation dots
+pub const FOCUS_MAX_LENGTH: usize = 31;
 
-    pub mod datetime
-    {
-        pub const INTERVAL: super::Duration = super::Duration::from_secs(30);
-        pub const DATE_FORMAT: &str = "date +\"%H:%M / %d.%m.%Y\"";
-    }
-
-    pub mod focus
-    {
-        pub const INTERVAL: super::Duration = super::Duration::from_secs(60);
-        // +1 for adding continuation dots
-        pub const MAX_LENGTH: usize = 31;
-    }
-
-    pub mod scroll
-    {
-        pub const INTERVAL: super::Duration = super::Duration::from_secs(60);
-    }
-
-    pub mod toggle
-    {
-        pub const INTERVAL: super::Duration = super::Duration::from_secs(30);
-    }
-}
+pub const SCROLL_INTERVAL: Duration = Duration::from_secs(60);
+pub const TOGGLE_INTERVAL: Duration = Duration::from_secs(30);
