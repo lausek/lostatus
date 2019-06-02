@@ -1,6 +1,5 @@
-#[macro_use]
-pub mod macros;
 pub mod scheduler;
+#[macro_use]
 pub mod util;
 
 use super::*;
