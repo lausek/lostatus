@@ -2,6 +2,9 @@ pub mod scheduler;
 #[macro_use]
 pub mod util;
 
+use self::scheduler::*;
+use self::util::*;
+
 use super::*;
 
 use self::scheduler::Scheduler;
