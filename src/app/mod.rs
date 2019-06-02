@@ -1,10 +1,9 @@
-pub mod i3;
 #[macro_use]
 pub mod macros;
 pub mod scheduler;
 pub mod util;
 
-pub use self::i3::*;
+use super::*;
 
 use self::scheduler::Scheduler;
 use crate::config::*;
@@ -14,18 +13,16 @@ use std::str::FromStr;
 use std::sync::mpsc::{Receiver, RecvTimeoutError};
 use std::time::Duration;
 
-pub struct App<T: Widget + ?Sized>
+pub struct App
 {
-    widgets: Vec<(String, Box<T>)>,
-    timeout: Option<Duration>,
-    scheduler: Scheduler,
+    pub(crate) widgets: Vec<(String, Box<dyn Widget>)>,
+    pub(crate) timeout: Option<Duration>,
+    pub(crate) scheduler: Scheduler,
 }
 
-impl<T> App<T>
-where
-    T: Widget + ?Sized,
+impl App
 {
-    pub fn init(widgets: Vec<Box<T>>) -> Self
+    pub fn init(widgets: Vec<Box<dyn Widget>>) -> Self
     {
         let mut app = Self {
             timeout: None,
@@ -50,30 +47,14 @@ where
 
     pub fn render(&self)
     {
-        i3print!("\n[");
-
-        let mut iter = self.widgets.iter();
-        let separator = I3Output::from_text("|");
-
-        if let Some((ref first, _)) = iter.next() {
-            i3print!(first);
-        }
-
-        for (ref block, _) in iter {
-            i3print!(",{}", separator);
-            i3print!(",{}", block);
-        }
-
-        i3print!("],");
-        i3flush!();
+        output_render(&self);
     }
 
     pub fn run(&mut self, receiver: &Receiver<UpdateEvent>) -> Result<(), &'static str>
     {
         use self::UpdateEvent::*;
 
-        i3print!("{ \"version\": 1, \"click_events\": true } [");
-        i3flush!();
+        output_init();
 
         self.render();
 
@@ -126,8 +107,6 @@ fn update<T>(scheduler: &mut Scheduler, widget: (usize, &mut (String, Box<T>)), 
 where
     T: Widget + ?Sized,
 {
-    use crate::config::COLOR_SCHEME;
-
     let (id, (cache, widget)) = widget;
     // if `update` returns None: nothing to update
     if let Some((i3output, next_update)) = widget.update(evt) {
@@ -145,7 +124,7 @@ where
 
                 format!("{}", i3output)
             }
-            Err(msg) => i3error!(msg),
+            Err(msg) => unimplemented!(), //i3error!(msg),
         };
 
         scheduler.schedule(id, next_update);

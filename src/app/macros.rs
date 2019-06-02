@@ -19,22 +19,3 @@ macro_rules! debug_log {
         debug_log!(format!($msg, $($x),*));
     }};
 }
-
-macro_rules! i3print {
-    ($msg:expr, $($x:expr),*) => {{ i3print!(format!($msg, $($x),*)); }};
-    ($msg:expr) => {{ print!("{}", $msg); }};
-}
-
-macro_rules! i3flush {
-    () => {{
-        use std::io::Write;
-        std::io::stdout().flush().unwrap();
-    }};
-}
-
-macro_rules! i3error {
-    ($msg:expr) => {
-        // TODO: add color
-        format!("{{\"full_text\": \"{}\"}}", $msg)
-    };
-}

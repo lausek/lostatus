@@ -1,5 +1,4 @@
 #![feature(box_patterns)]
-#![feature(self_in_typedefs)]
 #![feature(bind_by_move_pattern_guards)]
 
 #[macro_use]
@@ -8,6 +7,7 @@ extern crate lazy_static;
 #[macro_use]
 extern crate serde_derive;
 
+#[cfg(feature = "i3")]
 extern crate i3ipc;
 extern crate serde;
 extern crate serde_json;
@@ -16,44 +16,35 @@ extern crate serde_json;
 mod app;
 mod config;
 mod widget;
+mod wm;
 
-pub use crate::app::{util::*, App};
-use crate::config::widgets;
-use crate::widget::UpdateEvent;
+use crate::app::*;
+use crate::config::*;
+use crate::widget::*;
+use crate::wm::*;
 
 use std::sync::mpsc::{channel, Sender};
 use std::thread;
 
-fn spawn_system_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
+fn main() -> Result<(), &'static str>
 {
-    let mut i3 = i3ipc::I3EventListener::connect().expect("i3 not running");
+    if cfg!(feature = "debug") {
+        setup_panic_hook();
+    }
 
-    thread::spawn(move || {
-        i3.subscribe(&[i3ipc::Subscription::Window])
-            .expect("could not subscribe to i3 events");
+    let (sender, receiver) = channel();
 
-        // TODO: does listen block?
-        loop {
-            for event in i3.listen() {
-                match event {
-                    Ok(event) => {
-                        debug_log!("from system");
+    spawn_user_sender(sender.clone());
+    spawn_system_sender(sender.clone());
 
-                        let sys_event = UpdateEvent::System(Box::new(event));
-                        sender.send(sys_event).unwrap();
-                    }
-                    _ => panic!("system event is err"),
-                }
-            }
-        }
-    })
+    App::init(widgets()).run(&receiver)
 }
 
 fn spawn_user_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
 {
-    use crate::app::I3Input;
     use std::io::BufRead;
 
+    // TODO: introduce generic input interface for frontends
     thread::spawn(move || {
         for line in std::io::stdin().lock().lines() {
             let mut input = line.expect("error on stdin line");
@@ -64,7 +55,7 @@ fn spawn_user_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
                 input = input.split_off(1);
             }
 
-            debug_log!("from i3: {:?}", input);
+            debug_log!("from sender: {:?}", input);
 
             match serde_json::from_str::<I3Input>(input.as_ref()) {
                 Ok(input) => sender.send(UpdateEvent::User(input)).unwrap(),
@@ -100,18 +91,4 @@ fn setup_panic_hook()
 
         debug_log!("A panic occurred at {}:{}: {}", filename, line, cause);
     }));
-}
-
-fn main() -> Result<(), &'static str>
-{
-    if cfg!(feature = "debug") {
-        setup_panic_hook();
-    }
-
-    let (sender, receiver) = channel();
-
-    spawn_system_sender(sender.clone());
-    spawn_user_sender(sender.clone());
-
-    App::init(widgets()).run(&receiver)
 }

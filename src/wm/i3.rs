@@ -1,3 +1,5 @@
+use super::*;
+
 type Internal = Option<String>;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -87,8 +89,6 @@ impl Default for I3Output
 {
     fn default() -> Self
     {
-        use crate::config::COLOR_SCHEME;
-
         Self {
             name: None,
             instance: None,
@@ -109,4 +109,77 @@ impl Default for I3Output
             markup: None,
         }
     }
+}
+
+macro_rules! i3print {
+    ($msg:expr, $($x:expr),*) => {{ i3print!(format!($msg, $($x),*)); }};
+    ($msg:expr) => {{ print!("{}", $msg); }};
+}
+
+macro_rules! i3flush {
+    () => {{
+        use std::io::Write;
+        std::io::stdout().flush().unwrap();
+    }};
+}
+
+macro_rules! i3error {
+    ($msg:expr) => {
+        // TODO: add color
+        format!("{{\"full_text\": \"{}\"}}", $msg)
+    };
+}
+
+#[cfg(feature = "i3")]
+pub fn output_init()
+{
+    i3print!("{ \"version\": 1, \"click_events\": true } [");
+    i3flush!();
+}
+
+#[cfg(feature = "i3")]
+pub fn output_render(app: &App)
+{
+    i3print!("\n[");
+
+    let mut iter = app.widgets.iter();
+    let separator = I3Output::from_text("|");
+
+    if let Some((ref first, _)) = iter.next() {
+        i3print!(first);
+    }
+
+    for (ref block, _) in iter {
+        i3print!(",{}", separator);
+        i3print!(",{}", block);
+    }
+
+    i3print!("],");
+    i3flush!();
+}
+
+#[cfg(feature = "i3")]
+pub fn spawn_system_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
+{
+    let mut i3 = i3ipc::I3EventListener::connect().expect("i3 not running");
+
+    thread::spawn(move || {
+        i3.subscribe(&[i3ipc::Subscription::Window])
+            .expect("could not subscribe to i3 events");
+
+        // TODO: does listen block?
+        loop {
+            for event in i3.listen() {
+                match event {
+                    Ok(event) => {
+                        debug_log!("from system");
+
+                        let sys_event = UpdateEvent::System(Box::new(event));
+                        sender.send(sys_event).unwrap();
+                    }
+                    _ => panic!("system event is err"),
+                }
+            }
+        }
+    })
 }

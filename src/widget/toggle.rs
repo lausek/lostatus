@@ -74,8 +74,6 @@ impl std::default::Default for Toggle
 
 fn build(active: bool, msg: String) -> Result<I3Output, &'static str>
 {
-    use crate::config::COLOR_SCHEME;
-
     let icon_from = |active: bool| chars::IO[if active { 1 } else { 0 }];
 
     let mut output = I3Output::from_text(format!("{} {}", icon_from(active), msg));

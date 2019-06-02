@@ -4,6 +4,8 @@ mod focus;
 mod scroll;
 mod toggle;
 
+use super::*;
+
 pub use crate::{app::*, config::*};
 
 pub use self::battery::Battery;
