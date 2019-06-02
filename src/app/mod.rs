@@ -124,7 +124,7 @@ where
 
                 format!("{}", i3output)
             }
-            Err(msg) => unimplemented!(), //i3error!(msg),
+            Err(msg) => output_error(msg),
         };
 
         scheduler.schedule(id, next_update);

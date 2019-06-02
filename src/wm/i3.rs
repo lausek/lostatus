@@ -159,6 +159,12 @@ pub fn output_render(app: &App)
 }
 
 #[cfg(feature = "i3")]
+pub fn output_error(msg: &str) -> String
+{
+    i3error!(msg)
+}
+
+#[cfg(feature = "i3")]
 pub fn spawn_system_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
 {
     let mut i3 = i3ipc::I3EventListener::connect().expect("i3 not running");
