@@ -1,9 +1,11 @@
+pub mod output;
 pub mod scheduler;
 #[macro_use]
 pub mod util;
 
-use self::scheduler::*;
-use self::util::*;
+pub use self::output::*;
+pub use self::scheduler::*;
+pub use self::util::*;
 
 use super::*;
 
@@ -40,7 +42,7 @@ impl App
             if widget.0.is_empty() {
                 // TODO: this needs an instance id or it will crash on click
                 //       e.g. battery in qemu does not exist -> no instance id set
-                widget.0 = format!("{}", I3Output::default());
+                widget.0 = format!("{}", Output::new());
             }
         }
 
@@ -111,20 +113,20 @@ where
 {
     let (id, (cache, widget)) = widget;
     // if `update` returns None: nothing to update
-    if let Some((i3output, next_update)) = widget.update(evt) {
-        *cache = match i3output {
-            Ok(mut i3output) => {
-                i3output.instance = Some(format!("{}", id));
+    if let Some((output, next_update)) = widget.update(evt) {
+        *cache = match output {
+            Ok(mut output) => {
+                output.instance = Some(format!("{}", id));
 
-                if i3output.color.is_none() {
-                    i3output.color = Some(COLOR_SCHEME.basic.foreground.to_string());
+                if output.color.is_none() {
+                    output.color = Some(COLOR_SCHEME.basic.foreground.to_string());
                 }
 
-                if i3output.background.is_none() {
-                    i3output.background = Some(COLOR_SCHEME.basic.background.to_string());
+                if output.background.is_none() {
+                    output.background = Some(COLOR_SCHEME.basic.background.to_string());
                 }
 
-                format!("{}", i3output)
+                format!("{}", output)
             }
             Err(msg) => output_error(msg),
         };

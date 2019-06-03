@@ -72,11 +72,11 @@ impl std::default::Default for Toggle
     }
 }
 
-fn build(active: bool, msg: String) -> Result<I3Output, &'static str>
+fn build(active: bool, msg: String) -> Result<Output, &'static str>
 {
     let icon_from = |active: bool| chars::IO[if active { 1 } else { 0 }];
 
-    let mut output = I3Output::from_text(format!("{} {}", icon_from(active), msg));
+    let mut output = Output::from_text(format!("{} {}", icon_from(active), msg));
 
     if active {
         output.color = Some(COLOR_SCHEME.good.foreground.to_string());

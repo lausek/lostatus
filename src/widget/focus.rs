@@ -29,7 +29,7 @@ impl Widget for Focus
                     } else {
                         name
                     };
-                    Ok(I3Output::from_text(output))
+                    Ok(Output::from_text(output))
                 } else {
                     Err("no focus")
                 };

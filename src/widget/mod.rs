@@ -23,7 +23,7 @@ pub const I3_ACTION_RIGHT: i64 = 3;
 pub const I3_ACTION_SCROLL_UP: i64 = 4;
 pub const I3_ACTION_SCROLL_DOWN: i64 = 5;
 
-pub type BlockResult = Result<I3Output, &'static str>;
+pub type BlockResult = Result<Output, &'static str>;
 pub type BlockUpdateResult = Option<(BlockResult, Option<Duration>)>;
 
 #[derive(Debug)]

@@ -25,7 +25,7 @@ impl Widget for Battery
                     match f64::from_str(content) {
                         Ok(capacity) => {
                             let symbol = get_percentage_char(capacity, &chars::BARS);
-                            Ok(I3Output::from_text(format!("{}", symbol)))
+                            Ok(Output::from_text(format!("{}", symbol)))
                         }
                         _ => Err("invalid content"),
                     }

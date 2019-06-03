@@ -41,7 +41,7 @@ impl Scroll
     {
         match shell(cmd) {
             Ok(_content) => match (self.fmt_callback)(&self) {
-                Ok(status) => Ok(I3Output::from_text(status)),
+                Ok(status) => Ok(Output::from_text(status)),
                 Err(msg) => Err(msg),
             },
             _ => Err("cmd failed"),
