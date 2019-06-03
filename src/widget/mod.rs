@@ -30,7 +30,7 @@ pub type BlockUpdateResult = Option<(BlockResult, Option<Duration>)>;
 pub enum UpdateEvent
 {
     System(Box<i3ipc::event::Event>),
-    User(I3Input),
+    User(Input),
     Time,
 }
 

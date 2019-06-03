@@ -36,7 +36,7 @@ impl Widget for Toggle
     fn update(&mut self, evt: &UpdateEvent) -> Option<(BlockResult, Option<Duration>)>
     {
         let output = match evt {
-            User(I3Input {
+            User(Input {
                 button: I3_ACTION_LEFT,
                 ..
             }) if self.cmd.is_some() => match shell(self.cmd.as_ref().unwrap()) {

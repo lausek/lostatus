@@ -54,7 +54,7 @@ impl Widget for Scroll
     fn update(&mut self, evt: &UpdateEvent) -> BlockUpdateResult
     {
         let output = match evt {
-            User(I3Input { button, .. }) => match *button {
+            User(Input { button, .. }) => match *button {
                 I3_ACTION_SCROLL_UP => {
                     if let Some(cmd) = &self.cmd_up {
                         self.exec(cmd.as_ref())

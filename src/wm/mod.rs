@@ -21,7 +21,7 @@ macro_rules! system_sender {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct I3Input
+pub struct Input
 {
     #[serde(default)]
     pub name: String,

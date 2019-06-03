@@ -56,9 +56,9 @@ fn spawn_user_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
 
             debug_log!("from sender: {:?}", input);
 
-            match serde_json::from_str::<I3Input>(input.as_ref()) {
+            match serde_json::from_str::<Input>(input.as_ref()) {
                 Ok(input) => sender.send(UpdateEvent::User(input)).unwrap(),
-                Err(msg) => panic!(format!("invalid json input: {}", msg)),
+                Err(msg) => panic!("invalid json input: {}", msg),
             }
         }
     })
