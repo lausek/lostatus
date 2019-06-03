@@ -23,9 +23,9 @@ pub fn output_render(_app: &App)
 }
 
 #[cfg(feature = "dwm")]
-pub fn output_error(_msg: &str) -> String
+pub fn output_error(msg: &str) -> String
 {
-    unimplemented!()
+    msg.to_string()
 }
 
 #[cfg(feature = "dwm")]
