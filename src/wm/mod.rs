@@ -10,6 +10,16 @@ pub use i3::*;
 
 use super::*;
 
+#[macro_export]
+macro_rules! system_sender {
+    ($fn:expr) => {
+        std::thread::Builder::new()
+            .name("lostatus_system_sender".to_string())
+            .spawn($fn)
+            .expect("spawning system sender failed.")
+    };
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct I3Input
 {

@@ -57,8 +57,7 @@ pub fn output_error(msg: &str) -> String
 pub fn spawn_system_sender(sender: Sender<UpdateEvent>) -> Option<std::thread::JoinHandle<()>>
 {
     let mut i3 = i3ipc::I3EventListener::connect().expect("i3 not running");
-
-    Some(thread::spawn(move || {
+    let thread = system_sender!(move || {
         i3.subscribe(&[i3ipc::Subscription::Window])
             .expect("could not subscribe to i3 events");
 
@@ -76,5 +75,6 @@ pub fn spawn_system_sender(sender: Sender<UpdateEvent>) -> Option<std::thread::J
                 }
             }
         }
-    }))
+    });
+    Some(thread)
 }
