@@ -1,5 +1,6 @@
 #![feature(box_patterns)]
 #![feature(bind_by_move_pattern_guards)]
+#![feature(str_as_mut_ptr)]
 
 #[macro_use]
 extern crate lazy_static;
@@ -7,8 +8,6 @@ extern crate lazy_static;
 #[macro_use]
 extern crate serde_derive;
 
-#[cfg(feature = "i3")]
-extern crate i3ipc;
 extern crate serde;
 extern crate serde_json;
 

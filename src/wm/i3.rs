@@ -1,3 +1,6 @@
+#[cfg(feature = "i3")]
+extern crate i3ipc;
+
 use super::*;
 
 type Internal = Option<String>;
