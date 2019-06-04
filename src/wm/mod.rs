@@ -11,13 +11,34 @@ pub use i3::*;
 use super::*;
 
 #[macro_export]
-macro_rules! system_sender {
-    ($fn:expr) => {
+macro_rules! sender {
+    (system, $fn:expr) => {
         std::thread::Builder::new()
             .name("lostatus_system_sender".to_string())
             .spawn($fn)
             .expect("spawning system sender failed.")
     };
+    (user, $fn:expr) => {
+        std::thread::Builder::new()
+            .name("lostatus_user_sender".to_string())
+            .spawn($fn)
+            .expect("spawning user sender failed.")
+    };
+}
+
+pub fn spawn_senders(sender: Sender<UpdateEvent>) -> Vec<std::thread::JoinHandle<()>>
+{
+    let mut handles = vec![];
+
+    if let Some(handle) = spawn_system_sender(sender.clone()) {
+        handles.push(handle);
+    }
+
+    if let Some(handle) = spawn_user_sender(sender.clone()) {
+        handles.push(handle);
+    }
+
+    handles
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

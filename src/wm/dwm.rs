@@ -37,9 +37,14 @@ fn set_status(status: String)
     }
 }
 
+pub fn spawn_user_sender(_sender: Sender<UpdateEvent>) -> Option<std::thread::JoinHandle<()>>
+{
+    None
+}
+
 pub fn spawn_system_sender(_sender: Sender<UpdateEvent>) -> Option<std::thread::JoinHandle<()>>
 {
-    let thread = system_sender!(move || unsafe {
+    let thread = sender!(system, move || unsafe {
         let (display, root) = x11comps();
         let mut event = XEvent { type_: 0 };
         XSelectInput(display, root, ButtonPressMask);
@@ -47,7 +52,7 @@ pub fn spawn_system_sender(_sender: Sender<UpdateEvent>) -> Option<std::thread::
             XNextEvent(display, &mut event as *mut XEvent);
             match event {
                 XEvent { button } => {
-                    println!("button pressed");
+                    println!("button pressed {:?}", button);
                 }
                 _ => {}
             }

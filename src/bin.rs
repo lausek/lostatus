@@ -23,7 +23,6 @@ use crate::widget::*;
 use crate::wm::*;
 
 use std::sync::mpsc::{channel, Sender};
-use std::thread;
 
 fn main() -> Result<(), &'static str>
 {
@@ -33,35 +32,9 @@ fn main() -> Result<(), &'static str>
 
     let (sender, receiver) = channel();
 
-    spawn_user_sender(sender.clone());
-    spawn_system_sender(sender.clone());
+    let _handles = spawn_senders(sender.clone());
 
     App::init(widgets()).run(&receiver)
-}
-
-fn spawn_user_sender(sender: Sender<UpdateEvent>) -> std::thread::JoinHandle<()>
-{
-    use std::io::BufRead;
-
-    // TODO: introduce generic input interface for frontends
-    thread::spawn(move || {
-        for line in std::io::stdin().lock().lines() {
-            let mut input = line.expect("error on stdin line");
-            if input == "[" {
-                continue;
-            }
-            if input.starts_with(',') {
-                input = input.split_off(1);
-            }
-
-            debug_log!("from sender: {:?}", input);
-
-            match serde_json::from_str::<Input>(input.as_ref()) {
-                Ok(input) => sender.send(UpdateEvent::User(input)).unwrap(),
-                Err(msg) => panic!("invalid json input: {}", msg),
-            }
-        }
-    })
 }
 
 fn setup_panic_hook()

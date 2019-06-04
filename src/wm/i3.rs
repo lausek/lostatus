@@ -54,10 +54,34 @@ pub fn output_error(msg: &str) -> String
     i3error!(msg)
 }
 
+pub fn spawn_user_sender(sender: Sender<UpdateEvent>) -> Option<std::thread::JoinHandle<()>>
+{
+    use std::io::BufRead;
+    let thread = sender!(user, move || {
+        for line in std::io::stdin().lock().lines() {
+            let mut input = line.expect("error on stdin line");
+            if input == "[" {
+                continue;
+            }
+            if input.starts_with(',') {
+                input = input.split_off(1);
+            }
+
+            debug_log!("from sender: {:?}", input);
+
+            match serde_json::from_str::<Input>(input.as_ref()) {
+                Ok(input) => sender.send(UpdateEvent::User(input)).unwrap(),
+                Err(msg) => panic!("invalid json input: {}", msg),
+            }
+        }
+    });
+    Some(thread)
+}
+
 pub fn spawn_system_sender(sender: Sender<UpdateEvent>) -> Option<std::thread::JoinHandle<()>>
 {
     let mut i3 = i3ipc::I3EventListener::connect().expect("i3 not running");
-    let thread = system_sender!(move || {
+    let thread = sender!(system, move || {
         i3.subscribe(&[i3ipc::Subscription::Window])
             .expect("could not subscribe to i3 events");
 
