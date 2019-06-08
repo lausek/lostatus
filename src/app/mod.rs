@@ -19,7 +19,7 @@ use std::time::Duration;
 
 pub struct App
 {
-    pub(crate) widgets: Vec<(String, Box<dyn Widget>)>,
+    pub(crate) widgets: Vec<(Output, Box<dyn Widget>)>,
     pub(crate) timeout: Option<Duration>,
     pub(crate) scheduler: Scheduler,
 }
@@ -33,17 +33,12 @@ impl App
             scheduler: Scheduler::new(widgets.len()),
             widgets: widgets
                 .into_iter()
-                .map(|w| (String::new(), w))
+                .map(|w| (Output::new(), w))
                 .collect::<Vec<_>>(),
         };
 
         for (id, mut widget) in &mut app.widgets.iter_mut().enumerate() {
             update(&mut app.scheduler, (id, &mut widget), &UpdateEvent::Time);
-            if widget.0.is_empty() {
-                // TODO: this needs an instance id or it will crash on click
-                //       e.g. battery in qemu does not exist -> no instance id set
-                widget.0 = format!("{}", Output::new());
-            }
         }
 
         app
@@ -107,7 +102,7 @@ impl App
     }
 }
 
-fn update<T>(scheduler: &mut Scheduler, widget: (usize, &mut (String, Box<T>)), evt: &UpdateEvent)
+fn update<T>(scheduler: &mut Scheduler, widget: (usize, &mut (Output, Box<T>)), evt: &UpdateEvent)
 where
     T: Widget + ?Sized,
 {
@@ -126,7 +121,7 @@ where
                     output.background = Some(COLOR_SCHEME.basic.background.to_string());
                 }
 
-                format!("{}", output)
+                output
             }
             Err(msg) => output_error(msg),
         };

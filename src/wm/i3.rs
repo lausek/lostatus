@@ -16,13 +16,6 @@ macro_rules! i3flush {
     }};
 }
 
-macro_rules! i3error {
-    ($msg:expr) => {
-        // TODO: add color
-        format!("{{\"full_text\": \"{}\"}}", $msg)
-    };
-}
-
 pub fn output_init()
 {
     i3print!("{ \"version\": 1, \"click_events\": true } [");
@@ -49,9 +42,9 @@ pub fn output_render(app: &App)
     i3flush!();
 }
 
-pub fn output_error(msg: &str) -> String
+pub fn output_error(msg: &str) -> Output
 {
-    i3error!(msg)
+    Output::from_text(msg)
 }
 
 pub fn spawn_user_sender(sender: Sender<UpdateEvent>) -> Option<std::thread::JoinHandle<()>>
@@ -101,4 +94,12 @@ pub fn spawn_system_sender(sender: Sender<UpdateEvent>) -> Option<std::thread::J
         }
     });
     Some(thread)
+}
+
+impl std::fmt::Display for Output
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error>
+    {
+        write!(f, "{}", serde_json::to_string(self).unwrap())
+    }
 }

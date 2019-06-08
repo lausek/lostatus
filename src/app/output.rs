@@ -56,12 +56,3 @@ impl Output
         new
     }
 }
-
-impl std::fmt::Display for Output
-{
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error>
-    {
-        write!(f, "{}", serde_json::to_string(self).unwrap())?;
-        Ok(())
-    }
-}
