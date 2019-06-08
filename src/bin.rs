@@ -1,6 +1,5 @@
 #![feature(box_patterns)]
 #![feature(bind_by_move_pattern_guards)]
-#![feature(str_as_mut_ptr)]
 
 #[macro_use]
 extern crate lazy_static;
