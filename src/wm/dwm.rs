@@ -13,15 +13,15 @@ pub fn output_render(app: &App)
             if !output.is_empty() {
                 output.push_str("|");
             }
-            output.push_str(&buffer);
+            output.push_str(&buffer.full_text);
             output
         });
     set_status(output);
 }
 
-pub fn output_error(msg: &str) -> String
+pub fn output_error(msg: &str) -> Output
 {
-    msg.to_string()
+    Output::from_text(msg)
 }
 
 fn set_status(status: String)
