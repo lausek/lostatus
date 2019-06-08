@@ -6,7 +6,7 @@ pub struct Scroll
     pub cmd_up: Option<String>,
     pub cmd_down: Option<String>,
     pub cmd_status: Option<String>,
-    fmt_callback: Box<Fn(&Self) -> Result<String, &'static str>>,
+    fmt_callback: Box<dyn Fn(&Self) -> Result<String, &'static str>>,
 }
 
 impl Scroll
@@ -39,7 +39,7 @@ impl Scroll
 
     fn exec(&self, cmd: &str) -> BlockResult
     {
-        match shell(cmd) {
+        match shell!(cmd) {
             Ok(_content) => match (self.fmt_callback)(&self) {
                 Ok(status) => Ok(Output::from_text(status)),
                 Err(msg) => Err(msg),
@@ -96,7 +96,7 @@ impl std::default::Default for Scroll
             cmd_status: None,
             fmt_callback: Box::new(|state| {
                 if let Some(cmd) = &state.cmd_status {
-                    return match shell(cmd.as_ref()) {
+                    return match shell!(cmd.as_ref()) {
                         Ok(content) => {
                             let status = content
                                 .lines()

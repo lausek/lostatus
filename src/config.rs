@@ -1,7 +1,10 @@
+#![allow(dead_code)]
+
+use super::*;
+
 use std::str::FromStr;
 use std::time::Duration;
 
-use crate::app::util::*;
 use crate::widget::{Action::*, *};
 
 pub const SHELL: &str = "fish";
@@ -39,17 +42,6 @@ pub struct ColorScheme
     pub bad: Color,
 }
 
-pub fn shell(cmd: &str) -> Result<String, String>
-{
-    match std::process::Command::new(SHELL)
-        .args(&["-c", cmd])
-        .output()
-    {
-        Ok(buffer) if buffer.status.success() => Ok(String::from_utf8(buffer.stdout).unwrap()),
-        err => Err(format!("{:?}", err)),
-    }
-}
-
 // TODO: make declaration nicer with procedural macro?
 pub fn widgets() -> Vec<Box<dyn Widget>>
 {
@@ -61,7 +53,7 @@ pub fn widgets() -> Vec<Box<dyn Widget>>
             state
                 .cmd_status
                 .as_ref()
-                .map_or(Err("no status cmd"), |cmd| match shell(cmd.as_ref()) {
+                .map_or(Err("no status cmd"), |cmd| match shell!(cmd.as_ref()) {
                     Ok(output) => {
                         let status = output.lines().next().unwrap().to_string();
                         let icon = match f64::from_str(status.as_ref()) {
@@ -83,7 +75,7 @@ pub fn widgets() -> Vec<Box<dyn Widget>>
             state
                 .cmd_status
                 .as_ref()
-                .map_or(Err("no status cmd"), |cmd| match shell(cmd.as_ref()) {
+                .map_or(Err("no status cmd"), |cmd| match shell!(cmd.as_ref()) {
                     Ok(output) => {
                         let status = output.lines().next().unwrap().to_string();
                         let icon = match f64::from_str(status.as_ref()) {

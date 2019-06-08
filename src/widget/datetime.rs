@@ -16,7 +16,7 @@ impl Widget for DateTime
     {
         match *evt {
             UpdateEvent::Time => {
-                let result = match shell(DATETIME_FORMAT) {
+                let result = match shell!(DATETIME_FORMAT) {
                     Ok(date) => {
                         let normalized = date.lines().next().unwrap();
                         Ok(Output::from_text(normalized))

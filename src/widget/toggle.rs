@@ -4,7 +4,7 @@ pub struct Toggle
 {
     active: bool,
     cmd: Option<String>,
-    fmt_callback: Box<Fn(&Self) -> Result<String, &'static str>>,
+    fmt_callback: Box<dyn Fn(&Self) -> Result<String, &'static str>>,
 }
 
 impl Toggle
@@ -39,7 +39,7 @@ impl Widget for Toggle
             User(Input {
                 button: I3_ACTION_LEFT,
                 ..
-            }) if self.cmd.is_some() => match shell(self.cmd.as_ref().unwrap()) {
+            }) if self.cmd.is_some() => match shell!(self.cmd.as_ref().unwrap()) {
                 Ok(_) => {
                     self.active = !self.active;
 
