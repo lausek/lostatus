@@ -1,9 +1,10 @@
 use std::fs::File;
 use std::sync::Mutex;
 
+pub const LOG_FILE_PATH: &str = "/tmp/lostatus.log";
 lazy_static! {
     pub static ref LOG: Mutex<File> =
-        Mutex::new(File::create("/tmp/lostatus.log").expect("could not open debug log"));
+        Mutex::new(File::create(LOG_FILE_PATH).expect("could not open debug log"));
 }
 
 #[macro_export]
@@ -21,7 +22,7 @@ macro_rules! shell {
 
 #[macro_export]
 macro_rules! debug_log {
-    ($msg:expr) => {if cfg!(debug_assertions) {
+    ($msg:expr) => {{
         use std::io::Write;
         use crate::app::util::LOG;
         if let Ok(mut lock) = LOG.lock() {
@@ -29,7 +30,7 @@ macro_rules! debug_log {
             lock.write_all($msg.as_bytes()).unwrap();
         }
     }};
-    ($msg:expr, $($x:expr),*) => {if cfg!(debug_assertions) {
+    ($msg:expr, $($x:expr),*) => {{
         debug_log!(format!($msg, $($x),*));
     }};
 }

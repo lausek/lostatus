@@ -25,9 +25,7 @@ use std::sync::mpsc::{channel, Sender};
 
 fn main() -> Result<(), &'static str>
 {
-    if cfg!(debug_assertions) {
-        setup_panic_hook();
-    }
+    setup_panic_hook();
 
     let (sender, receiver) = channel();
 
