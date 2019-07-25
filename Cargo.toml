@@ -9,7 +9,6 @@ name = "lostatus"
 path = "src/bin.rs"
 
 [features]
-debug = []
 i3 = []
 dwm = []
 
