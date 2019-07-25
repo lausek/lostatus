@@ -1,3 +1,5 @@
+use super::*;
+
 pub mod output;
 pub mod scheduler;
 #[macro_use]
@@ -6,12 +8,6 @@ pub mod util;
 pub use self::output::*;
 pub use self::scheduler::*;
 pub use self::util::*;
-
-use super::*;
-
-use self::scheduler::Scheduler;
-use crate::config::*;
-use crate::widget::{UpdateEvent, Widget};
 
 use std::str::FromStr;
 use std::sync::mpsc::{Receiver, RecvTimeoutError};

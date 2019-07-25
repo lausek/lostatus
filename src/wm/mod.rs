@@ -1,3 +1,5 @@
+use super::*;
+
 #[cfg(not(any(feature = "i3", feature = "dwm")))]
 pub mod default;
 #[cfg(feature = "dwm")]
@@ -11,8 +13,6 @@ pub use default::*;
 pub use dwm::*;
 #[cfg(feature = "i3")]
 pub use i3::*;
-
-use super::*;
 
 #[macro_export]
 macro_rules! sender {

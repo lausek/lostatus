@@ -34,8 +34,7 @@ pub fn output_render(app: &App)
     }
 
     for (ref block, _) in iter {
-        i3print!(",{}", separator);
-        i3print!(",{}", block);
+        i3print!(",{},{}", separator, block);
     }
 
     i3print!("],");

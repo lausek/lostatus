@@ -5,8 +5,6 @@ use super::*;
 use std::str::FromStr;
 use std::time::Duration;
 
-use crate::widget::{Action::*, *};
-
 pub const SHELL: &str = "fish";
 pub const INTERVAL: Duration = Duration::from_secs(4);
 pub const COLOR_SCHEME: ColorScheme = ColorScheme {
@@ -45,6 +43,7 @@ pub struct ColorScheme
 // TODO: make declaration nicer with procedural macro?
 pub fn widgets() -> Vec<Box<dyn Widget>>
 {
+    use Action::*;
     let volume = Scroll::new()
         .command(ScrollUp, "~/.config/scripts/volume up")
         .command(ScrollDown, "~/.config/scripts/volume down")
@@ -62,7 +61,7 @@ pub fn widgets() -> Vec<Box<dyn Widget>>
                         };
                         Ok(format!("{} {}", icon, status))
                     }
-                    Err(_) => Err("status command failed"),
+                    _ => Err("status command failed"),
                 })
         });
 
@@ -84,7 +83,7 @@ pub fn widgets() -> Vec<Box<dyn Widget>>
                         };
                         Ok(format!("{} {}", icon, status))
                     }
-                    Err(_) => Err("status command failed"),
+                    _ => Err("status command failed"),
                 })
         });
 
