@@ -18,7 +18,9 @@ pub use self::UpdateEvent::*;
 pub use std::time::Duration;
 
 pub const I3_ACTION_LEFT: i64 = 1;
+#[allow(dead_code)]
 pub const I3_ACTION_MIDDLE: i64 = 2;
+#[allow(dead_code)]
 pub const I3_ACTION_RIGHT: i64 = 3;
 pub const I3_ACTION_SCROLL_UP: i64 = 4;
 pub const I3_ACTION_SCROLL_DOWN: i64 = 5;
@@ -26,6 +28,7 @@ pub const I3_ACTION_SCROLL_DOWN: i64 = 5;
 pub type BlockResult = Result<Output, &'static str>;
 pub type BlockUpdateResult = Option<(BlockResult, Option<Duration>)>;
 
+#[allow(dead_code)]
 #[derive(Debug)]
 pub enum UpdateEvent
 {
@@ -34,6 +37,7 @@ pub enum UpdateEvent
     Time,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, PartialEq)]
 pub enum Action
 {

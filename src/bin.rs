@@ -23,22 +23,9 @@ use crate::wm::*;
 
 use std::sync::mpsc::{channel, Sender};
 
-#[macro_export]
-macro_rules! shell {
-    ($cmd:expr $(, $arg:expr)*) => {
-        match std::process::Command::new(SHELL)
-            .args(&["-c", $cmd $(, $arg)*])
-            .output()
-        {
-            Ok(buffer) if buffer.status.success() => Ok(String::from_utf8(buffer.stdout).unwrap()),
-            err => Err(format!("{:?}", err)),
-        }
-    };
-}
-
 fn main() -> Result<(), &'static str>
 {
-    if cfg!(feature = "debug") {
+    if cfg!(debug_assertions) {
         setup_panic_hook();
     }
 
