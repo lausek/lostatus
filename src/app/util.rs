@@ -9,15 +9,19 @@ lazy_static! {
 
 #[macro_export]
 macro_rules! shell {
-    ($cmd:expr $(, $arg:expr)*) => {
+    ($cmd:expr $(, $arg:expr)*) => {{
+        // TODO: refactor this
+        let cmd = format!("{}", vec![
+            format!("{}", $cmd) $(, format!("{}", $arg))*
+        ].join(" "));
         match std::process::Command::new(SHELL)
-            .args(&["-c", $cmd $(, $arg)*])
+            .args(&["-c", cmd.as_ref()])
             .output()
         {
             Ok(buffer) if buffer.status.success() => Ok(String::from_utf8(buffer.stdout).unwrap()),
             err => Err(format!("{:?}", err)),
         }
-    };
+    }};
 }
 
 #[macro_export]

@@ -26,7 +26,7 @@ pub fn output_error(msg: &str) -> Output
 
 fn set_status(status: String)
 {
-    shell!("xsetroot", "-name", status.as_ref()).unwrap();
+    shell!("xsetroot", "-name", format!("'{}'", status)).unwrap();
 }
 
 pub fn spawn_user_sender(_sender: Sender<UpdateEvent>) -> Option<std::thread::JoinHandle<()>>

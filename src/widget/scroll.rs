@@ -57,14 +57,14 @@ impl Widget for Scroll
             User(Input { button, .. }) => match *button {
                 I3_ACTION_SCROLL_UP => {
                     if let Some(cmd) = &self.cmd_up {
-                        self.exec(cmd.as_ref())
+                        self.exec(cmd)
                     } else {
                         return None;
                     }
                 }
                 I3_ACTION_SCROLL_DOWN => {
                     if let Some(cmd) = &self.cmd_down {
-                        self.exec(cmd.as_ref())
+                        self.exec(cmd)
                     } else {
                         return None;
                     }
@@ -73,7 +73,7 @@ impl Widget for Scroll
             },
             Time => {
                 if let Some(cmd) = &self.cmd_status {
-                    self.exec(cmd.as_ref())
+                    self.exec(cmd)
                 } else {
                     Err("no status cmd")
                 }
@@ -96,7 +96,7 @@ impl std::default::Default for Scroll
             cmd_status: None,
             fmt_callback: Box::new(|state| {
                 if let Some(cmd) = &state.cmd_status {
-                    return match shell!(cmd.as_ref()) {
+                    return match shell!(cmd) {
                         Ok(content) => {
                             let status = content
                                 .lines()

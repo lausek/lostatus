@@ -52,7 +52,7 @@ pub fn widgets() -> Vec<Box<dyn Widget>>
             state
                 .cmd_status
                 .as_ref()
-                .map_or(Err("no status cmd"), |cmd| match shell!(cmd.as_ref()) {
+                .map_or(Err("no status cmd"), |cmd| match shell!(cmd) {
                     Ok(output) => {
                         let status = output.lines().next().unwrap().to_string();
                         let icon = match f64::from_str(status.as_ref()) {
@@ -74,7 +74,7 @@ pub fn widgets() -> Vec<Box<dyn Widget>>
             state
                 .cmd_status
                 .as_ref()
-                .map_or(Err("no status cmd"), |cmd| match shell!(cmd.as_ref()) {
+                .map_or(Err("no status cmd"), |cmd| match shell!(cmd) {
                     Ok(output) => {
                         let status = output.lines().next().unwrap().to_string();
                         let icon = match f64::from_str(status.as_ref()) {
