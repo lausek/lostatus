@@ -1,8 +1,12 @@
+#[cfg(not(any(feature = "i3", feature = "dwm")))]
+pub mod default;
 #[cfg(feature = "dwm")]
 pub mod dwm;
 #[cfg(feature = "i3")]
 pub mod i3;
 
+#[cfg(not(any(feature = "i3", feature = "dwm")))]
+pub use default::*;
 #[cfg(feature = "dwm")]
 pub use dwm::*;
 #[cfg(feature = "i3")]
